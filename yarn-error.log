@@ -1,5 +1,5 @@
 Arguments: 
-  /Users/cameron/.nvm/versions/node/v16.15.0/bin/node /Users/cameron/.yarn/bin/yarn.js add @typechain/ethers-v5-D
+  /Users/cameron/.nvm/versions/node/v16.15.0/bin/node /Users/cameron/.yarn/bin/yarn.js add https://github.com/DonGambas/gsn/packages/cli --dev
 
 PATH: 
   /Users/cameron/.yarn/bin:/Users/cameron/.config/yarn/global/node_modules/.bin:/Users/cameron/.nvm/versions/node/v16.15.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/Users/cameron/.local/share/solana/install/active_release/bin:/Users/cameron/.cargo/bin:/Users/cameron/.foundry/bin:/Users/cameron/Library/Android/sdk/emulator:/Users/cameron/Library/Android/sdk/platform-tools:/Users/cameron/.web3j
@@ -14,27 +14,28 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/@typechain%2fethers-v5-D: Not found
-      at Request.params.callback [as _callback] (/Users/cameron/.yarn/lib/cli.js:66138:18)
-      at Request.self.callback (/Users/cameron/.yarn/lib/cli.js:140883:22)
+  Error: https://github.com/DonGambas/gsn/packages/cli: Request failed "404 Not Found"
+      at ResponseError.ExtendableBuiltin (/Users/cameron/.yarn/lib/cli.js:696:66)
+      at new ResponseError (/Users/cameron/.yarn/lib/cli.js:802:124)
+      at Request.<anonymous> (/Users/cameron/.yarn/lib/cli.js:66208:16)
       at Request.emit (node:events:527:28)
-      at Request.<anonymous> (/Users/cameron/.yarn/lib/cli.js:141855:10)
-      at Request.emit (node:events:527:28)
-      at IncomingMessage.<anonymous> (/Users/cameron/.yarn/lib/cli.js:141777:12)
-      at Object.onceWrapper (node:events:641:28)
-      at IncomingMessage.emit (node:events:539:35)
-      at endReadableNT (node:internal/streams/readable:1345:12)
-      at processTicksAndRejections (node:internal/process/task_queues:83:21)
+      at Request.module.exports.Request.onRequestResponse (/Users/cameron/.yarn/lib/cli.js:141760:10)
+      at ClientRequest.emit (node:events:527:28)
+      at HTTPParser.parserOnIncomingClient (node:_http_client:631:27)
+      at HTTPParser.parserOnHeadersComplete (node:_http_common:128:17)
+      at TLSSocket.socketOnData (node:_http_client:494:22)
+      at TLSSocket.emit (node:events:527:28)
 
 npm manifest: 
   {
-    "name": "hardhat-project",
+    "name": "rly-gas-station",
     "devDependencies": {
       "@nomicfoundation/hardhat-chai-matchers": "^1.0.4",
       "@nomicfoundation/hardhat-toolbox": "^2.0.0",
       "@nomiclabs/hardhat-ethers": "^2.2.1",
       "@nomiclabs/hardhat-etherscan": "^3.1.2",
       "@opengsn/cli": "3.0.0-beta.2",
+      "@typechain/ethers-v5": "^10.1.1",
       "@typechain/hardhat": "^6.1.4",
       "@types/chai": "^4.3.3",
       "@types/mocha": "^10.0.0",
@@ -48,7 +49,13 @@ npm manifest:
       "typescript": "^4.8.4"
     },
     "dependencies": {
-      "@opengsn/contracts": "^3.0.0-beta.1"
+      "@opengsn/contracts": "^3.0.0-beta.1",
+      "ethers": "^5.7.2"
+    },
+    "scripts":{
+      "start:local":"npx hardhat --config hardhat.config.local.ts node",
+      "deploy:local":"npx hardhat run --config hardhat.config.local.ts --network localhost scripts/deployLocal.ts",
+      "test:local":"npx run-with-hardhat-node 'hardhat test  --config hardhat.config.local.ts'"
     }
   }
 
@@ -1168,6 +1175,14 @@ Lockfile:
     version "1.0.3"
     resolved "https://registry.yarnpkg.com/@tsconfig/node16/-/node16-1.0.3.tgz#472eaab5f15c1ffdd7f8628bd4c4f753995ec79e"
     integrity sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==
+  
+  "@typechain/ethers-v5@^10.1.1":
+    version "10.1.1"
+    resolved "https://registry.yarnpkg.com/@typechain/ethers-v5/-/ethers-v5-10.1.1.tgz#fdb527d8854129cea5f139d76c6c6e1c9bb040ec"
+    integrity sha512-o6nffJBxwmeX1ZiZpdnP/tqGd/7M7iYvQC88ZXaFFoyAGh7eYncynzVjOJV0XmaKzAc6puqyqZrnva+gJbk4sw==
+    dependencies:
+      lodash "^4.17.15"
+      ts-essentials "^7.0.1"
   
   "@typechain/hardhat@^6.1.4":
     version "6.1.4"
@@ -3421,7 +3436,7 @@ Lockfile:
       uuid "2.0.1"
       xmlhttprequest "1.8.0"
   
-  ethers@^5.6.5, ethers@^5.7.0:
+  ethers@^5.6.5, ethers@^5.7.0, ethers@^5.7.2:
     version "5.7.2"
     resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.7.2.tgz#3a7deeabbb8c030d4126b24f84e525466145872e"
     integrity sha512-wswUsmWo1aOK8rR7DIKiWSw9DbLWe6x98Jrn8wcTflTVvaXhAMaB5zGAXy0GYQEQp9iO1iSHWVyARQm11zUtyg==
