@@ -4,7 +4,7 @@ const Web3HttpProvider = require("web3-providers-http");
 import * as TokenFaucet from "../artifacts/contracts/TokenFaucet.sol/TokenFaucet.json";
 
 async function main() {
-  const env = await GsnTestEnvironment.startGsn("localhost");
+  const env = await GsnTestEnvironment.startGsn("localhost", 8090);
   const { contractsDeployment } = env;
 
   const web3provider = new Web3HttpProvider("http://localhost:8545");
