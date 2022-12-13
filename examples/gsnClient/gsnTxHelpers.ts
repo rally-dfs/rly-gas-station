@@ -9,6 +9,7 @@ import {
   AccountKeypair,
 } from "./utils";
 
+//TODO get rid of metamask for typed data signing
 import {
   signTypedData,
   SignTypedDataVersion,

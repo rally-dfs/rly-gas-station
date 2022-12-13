@@ -1,4 +1,5 @@
 import { Address } from "../utils";
+//TODO get rid of metamask for typed data signing
 import { TypedMessage } from "@metamask/eth-sig-util";
 
 const GsnDomainSeparatorType = {

@@ -46,8 +46,6 @@ export class gsnLightClient {
       httpRequest.metadata.signature
     );
 
-    //TODO: can introduce dry run here if we want
-
     //this is where we relay the transaction
 
     const res = await axios.post(`${this.config.relayUrl}/relay`, httpRequest);
