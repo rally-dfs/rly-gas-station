@@ -49,10 +49,26 @@ const clientExample = async () => {
   const balPost = await faucet.balanceOf(account.address);
   const balPostEth = await web3provider.getBalance(account.address);
 
-  console.log(`balance for ${account.address} pre RLY = ${balPre}`);
-  console.log(`balance for ${account.address} post RLY = ${balPost}`);
-  console.log(`balance for ${account.address} pre ETH = ${balPreEth}`);
-  console.log(`balance for ${account.address} post ETH = ${balPostEth}`);
+  console.log(
+    `balance for ${account.address} pre RLY = ${ethers.utils.formatEther(
+      balPre
+    )}`
+  );
+  console.log(
+    `balance for ${account.address} post RLY = ${ethers.utils.formatEther(
+      balPost
+    )}`
+  );
+  console.log(
+    `balance for ${account.address} pre ETH = ${ethers.utils.formatEther(
+      balPreEth
+    )}`
+  );
+  console.log(
+    `balance for ${account.address} post ETH = ${ethers.utils.formatEther(
+      balPostEth
+    )}`
+  );
 };
 
 clientExample().catch((error) => {

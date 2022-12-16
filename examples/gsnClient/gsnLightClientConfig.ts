@@ -20,7 +20,7 @@ export interface gsnLightClientConfig {
 
 export const gsnLightClientRLYConfig = {
   local: {
-    paymasterAddress: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+    paymasterAddress: "0xc6e7DF5E7b4f2A278906862b61205850344D4e7d",
     forwarderAddress: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
     relayHubAddress: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
     relayWorkerAddress: "0x84ef35506635109ce61544193e8f87b0a1a1b4fd",

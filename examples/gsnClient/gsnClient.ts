@@ -85,6 +85,10 @@ export class gsnLightClient {
       this.web3Provider
     );
 
+    if (!transaction.gas) {
+      throw "no gas";
+    }
+
     const relayRequest: RelayRequest = {
       request: {
         from: transaction.from,
