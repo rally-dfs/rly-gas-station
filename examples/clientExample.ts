@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { BigNumber, ethers, Wallet } from "ethers";
 import * as TokenFaucet from "../artifacts/contracts/TokenFaucet.sol/TokenFaucet.json";
 import { gsnLightClient } from "./gsnClient/gsnClient";
 import { GsnTransactionDetails, rlyEnv } from "./gsnClient/utils";
@@ -11,6 +11,7 @@ const clientExample = async () => {
   const account = ethers.Wallet.createRandom();
 
   const gsnClient = new gsnLightClient(account, rlyEnv.local);
+  await gsnClient.init();
 
   const web3provider = new ethers.providers.JsonRpcProvider(
     "http://localhost:8545"
@@ -25,8 +26,8 @@ const clientExample = async () => {
 
   //TODO: make this easier for dev
   //call claim method on contract, will be sent via GSN
-  const tx = await faucet.populateTransaction.claim();
-  const gas = await faucet.estimateGas.claim();
+  const tx = await faucet.populateTransaction.claim?.();
+  const gas = await faucet.estimateGas.claim?.();
   const { maxFeePerGas, maxPriorityFeePerGas } =
     await web3provider.getFeeData();
 
@@ -41,13 +42,17 @@ const clientExample = async () => {
   } as GsnTransactionDetails;
 
   const balPre = await faucet.balanceOf(account.address);
+  const balPreEth = await web3provider.getBalance(account.address);
 
   await gsnClient.relayTransaction(gsnTx);
 
   const balPost = await faucet.balanceOf(account.address);
+  const balPostEth = await web3provider.getBalance(account.address);
 
-  console.log(`balance for ${account.address} pre = ${balPre}`);
-  console.log(`balance for ${account.address} post = ${balPost}`);
+  console.log(`balance for ${account.address} pre RLY = ${balPre}`);
+  console.log(`balance for ${account.address} post RLY = ${balPost}`);
+  console.log(`balance for ${account.address} pre ETH = ${balPreEth}`);
+  console.log(`balance for ${account.address} post ETH = ${balPostEth}`);
 };
 
 clientExample().catch((error) => {

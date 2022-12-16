@@ -1,7 +1,7 @@
 import { ethers, BigNumber } from "ethers";
 import { RelayRequest } from "./EIP712/RelayRequest";
 import { gsnLightClientConfig } from "./gsnLightClientConfig";
-import { TypedRequestData } from "./EIP712/typedSigning";
+import { TypedGsnRequestData } from "./EIP712/typedSigning";
 import {
   PrefixedHexString,
   GsnTransactionDetails,
@@ -9,17 +9,10 @@ import {
   AccountKeypair,
 } from "./utils";
 
-//TODO get rid of metamask for typed data signing
-import {
-  signTypedData,
-  SignTypedDataVersion,
-  recoverTypedSignature,
-} from "@metamask/eth-sig-util";
-
 //TODO: move outside of @opengsn
 
-import relayHubAbi from "@opengsn/common/dist/interfaces/IRelayHub.json";
-import forwarderAbi from "@opengsn/common/dist/interfaces/IForwarder.json";
+import relayHubAbi from "./ABI/IRelayHub.json";
+import forwarderAbi from "./ABI/IForwarder.json";
 
 const calculateCalldataBytesZeroNonzero = (
   calldata: PrefixedHexString
@@ -117,24 +110,25 @@ export const signRequest = async (
 ) => {
   const cloneRequest = { ...relayRequest };
 
-  const signedData = new TypedRequestData(
+  const signedGsnData = new TypedGsnRequestData(
     domainSeparatorName,
     Number(chainId),
     relayRequest.relayData.forwarder,
     cloneRequest
   );
 
-  const signature = signTypedData({
-    privateKey: Buffer.from(account.privateKey.replace(/^0x/, ""), "hex"),
-    data: signedData,
-    version: SignTypedDataVersion.V4,
-  });
+  const wallet = new ethers.Wallet(account.privateKey);
 
-  const rec = recoverTypedSignature({
-    data: signedData,
-    signature,
-    version: SignTypedDataVersion.V4,
-  });
+  const types = {
+    RelayData: [...signedGsnData.types.RelayData],
+    RelayRequest: [...signedGsnData.types.RelayRequest],
+  };
+
+  const signature = await wallet._signTypedData(
+    signedGsnData.domain,
+    types,
+    signedGsnData.message
+  );
 
   return signature;
 };

@@ -32,9 +32,12 @@ export class gsnLightClient {
     );
   }
 
+  init = async () => {
+    await this._updateConfig();
+  };
+
   relayTransaction = async (transaction: GsnTransactionDetails) => {
     const relayRequest = await this._buildRelayRequest(transaction);
-
     const httpRequest = await this._buildRelayHttpRequest(
       relayRequest,
       this.config
@@ -49,8 +52,13 @@ export class gsnLightClient {
     //this is where we relay the transaction
 
     const res = await axios.post(`${this.config.relayUrl}/relay`, httpRequest);
+  };
 
-    console.log(res);
+  _updateConfig = async () => {
+    const { data } = await axios.get(`${this.config.relayUrl}/getaddr`);
+    //get current relay worker address from server
+    this.config.relayWorkerAddress = data.relayWorkerAddress;
+    return;
   };
 
   _buildRelayRequest = async (

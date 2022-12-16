@@ -794,6 +794,41 @@
     table "^6.8.0"
     undici "^5.4.0"
 
+"@opengsn/cli@^3.0.0-beta.2":
+  version "3.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@opengsn/cli/-/cli-3.0.0-beta.2.tgz#2fa4dc4bd67872379eacc53215cbb8cbedd4eb42"
+  integrity sha512-GpDgKWoAAvalay0Atmi/hvu1arvRyrxwz3TzLmmFcPrjsj7ooDzzOPKxO+dzqm09pZvjNO7fCeQ9XW+ySRLxKA==
+  dependencies:
+    "@ethereumjs/tx" "^3.2.0"
+    "@opengsn/common" "^3.0.0-beta.2"
+    "@opengsn/logger" "^3.0.0-beta.2"
+    "@opengsn/provider" "^3.0.0-beta.2"
+    "@opengsn/relay" "^3.0.0-beta.2"
+    "@truffle/hdwallet-provider" "^2.0.10"
+    "@types/asciichart" "^1.5.4"
+    "@types/clear" "^0.1.1"
+    "@types/cli-table" "^0.3.0"
+    "@types/node" "^13.0.0"
+    "@types/web3" "1.0.20"
+    "@types/web3-provider-engine" "^14.0.1"
+    asciichart "^1.5.25"
+    bn.js "^5.2.1"
+    clear "^0.1.0"
+    cli-table "^0.3.4"
+    colors "1.4.0"
+    commander "^6.1.0"
+    console-read-write "^0.1.1"
+    ethereum-cryptography "^1.1.2"
+    ethereum-protocol "^1.0.1"
+    ethereumjs-util "^7.1.0"
+    ethereumjs-wallet "^1.0.2"
+    ethval "^2.1.1"
+    moment "^2.29.1"
+    ow "^0.28.1"
+    terminal-link "^2.1.1"
+    web3 "^1.7.3"
+    web3-provider-engine "^16.0.4"
+
 "@opengsn/cli@https://github.com/DonGambas/gsn-cli.git":
   version "3.0.0-beta.2"
   resolved "https://github.com/DonGambas/gsn-cli.git#7b7e7af3c33ac27ce283c0a5c4bc15ca60076c61"
@@ -855,20 +890,25 @@
     web3-eth-contract "^1.7.3"
     web3-utils "^1.7.3"
 
-"@opengsn/contracts@^3.0.0-beta.1":
-  version "3.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@opengsn/contracts/-/contracts-3.0.0-beta.1.tgz#4068326fb4d5268aa9f67c68fad18e9c5e9f31b5"
-  integrity sha512-ZQrpe8F45ONSyLnCeEbbSXWqUpP5EIjnOsIMHIudYDT+0c689EpzsZIMluX3RZhYrUMvc7JW05zx/sbCBeEhug==
-  dependencies:
-    "@openzeppelin/contracts" "^4.2.0"
-
-"@opengsn/contracts@^3.0.0-beta.2":
+"@opengsn/contracts@3.0.0-beta.2", "@opengsn/contracts@^3.0.0-beta.2":
   version "3.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/@opengsn/contracts/-/contracts-3.0.0-beta.2.tgz#349a72cde26ca1779e0bea3ea0d0837f2f5831dc"
   integrity sha512-NREhDW8ah6NM0I49/gythYVLKRkJ7Z9PIxHByBbiDQRWihmC5wpQS803kTUVnxIRbbtVlUrYXyegP/u9OYTL5A==
   dependencies:
     "@openzeppelin/contracts" "^4.2.0"
     web3-eth-contract "^1.7.4"
+
+"@opengsn/dev@^3.0.0-beta.2":
+  version "3.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@opengsn/dev/-/dev-3.0.0-beta.2.tgz#dc48eeb297b5664ed60fb488abbb29ba46d93183"
+  integrity sha512-H3uU0aW1XxFKOf8LJ6Yak1vaT1/X6GzpAFWdmyqzhk4hvdPJ36gydN5qLu2QfeuxNmg0eKPVVk6+ZS6X2VJVqA==
+  dependencies:
+    "@opengsn/cli" "^3.0.0-beta.2"
+    "@opengsn/common" "^3.0.0-beta.2"
+    "@opengsn/contracts" "^3.0.0-beta.2"
+    "@opengsn/logger" "^3.0.0-beta.2"
+    "@opengsn/provider" "^3.0.0-beta.2"
+    "@opengsn/relay" "^3.0.0-beta.2"
 
 "@opengsn/logger@^3.0.0-beta.2":
   version "3.0.0-beta.2"
@@ -878,6 +918,25 @@
     "@opengsn/common" "^3.0.0-beta.2"
     loglevel "^1.8.0"
     winston "^3.3.3"
+
+"@opengsn/paymasters@^3.0.0-beta.2":
+  version "3.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@opengsn/paymasters/-/paymasters-3.0.0-beta.2.tgz#5de306c4596a43dc013446aa8dd07fb527309191"
+  integrity sha512-qttn4ZLCnaM7YqqsTnW6k9kF+9fFV5aQm2+z7mekqXh6XGL9KsxmCCCXWF0mX8UqVeGNbR7i4Lz03tLyU7Tnlg==
+  dependencies:
+    "@metamask/eth-sig-util" "^4.0.1"
+    "@opengsn/common" "^3.0.0-beta.2"
+    "@opengsn/contracts" "^3.0.0-beta.2"
+    "@opengsn/dev" "^3.0.0-beta.2"
+    "@opengsn/provider" "^3.0.0-beta.2"
+    "@openzeppelin/contracts" "^4.2.0"
+    "@uniswap/v3-periphery" "^1.1.1"
+    ethereumjs-util "^7.1.0"
+    web3 "^1.7.4"
+    web3-core-helpers "^1.7.4"
+    web3-eth-abi "^1.7.4"
+    web3-eth-contract "^1.7.4"
+    web3-utils "^1.7.4"
 
 "@opengsn/provider@^3.0.0-beta.2":
   version "3.0.0-beta.2"
@@ -933,6 +992,11 @@
     web3-eth "^1.7.4"
     web3-eth-contract "^1.7.4"
     web3-utils "^1.7.4"
+
+"@openzeppelin/contracts@3.4.2-solc-0.7":
+  version "3.4.2-solc-0.7"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-3.4.2-solc-0.7.tgz#38f4dbab672631034076ccdf2f3201fab1726635"
+  integrity sha512-W6QmqgkADuFcTLzHL8vVoNBtkwjvQRpYIAom7KiUNoLKghyx3FgH0GBjt8NRvigV1ZmMOBllvE1By1C+bi8WpA==
 
 "@openzeppelin/contracts@^4.2.0":
   version "4.8.0"
@@ -1407,6 +1471,32 @@
     "@types/bn.js" "*"
     "@types/underscore" "*"
 
+"@uniswap/lib@^4.0.1-alpha":
+  version "4.0.1-alpha"
+  resolved "https://registry.yarnpkg.com/@uniswap/lib/-/lib-4.0.1-alpha.tgz#2881008e55f075344675b3bca93f020b028fbd02"
+  integrity sha512-f6UIliwBbRsgVLxIaBANF6w09tYqc6Y/qXdsrbEmXHyFA7ILiKrIwRFXe1yOg8M3cksgVsO9N7yuL2DdCGQKBA==
+
+"@uniswap/v2-core@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@uniswap/v2-core/-/v2-core-1.0.1.tgz#af8f508bf183204779938969e2e54043e147d425"
+  integrity sha512-MtybtkUPSyysqLY2U210NBDeCHX+ltHt3oADGdjqoThZaFRDKwM6k1Nb3F0A3hk5hwuQvytFWhrWHOEq6nVJ8Q==
+
+"@uniswap/v3-core@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@uniswap/v3-core/-/v3-core-1.0.0.tgz#6c24adacc4c25dceee0ba3ca142b35adbd7e359d"
+  integrity sha512-kSC4djMGKMHj7sLMYVnn61k9nu+lHjMIxgg9CDQT+s2QYLoA56GbSK9Oxr+qJXzzygbkrmuY6cwgP6cW2JXPFA==
+
+"@uniswap/v3-periphery@^1.1.1":
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/@uniswap/v3-periphery/-/v3-periphery-1.4.3.tgz#a6da4632dbd46b139cc13a410e4ec09ad22bd19f"
+  integrity sha512-80c+wtVzl5JJT8UQskxVYYG3oZb4pkhY0zDe0ab/RX4+8f9+W5d8wI4BT0wLB0wFQTSnbW+QdBSpkHA/vRyGBA==
+  dependencies:
+    "@openzeppelin/contracts" "3.4.2-solc-0.7"
+    "@uniswap/lib" "^4.0.1-alpha"
+    "@uniswap/v2-core" "1.0.1"
+    "@uniswap/v3-core" "1.0.0"
+    base64-sol "1.0.1"
+
 abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
@@ -1845,6 +1935,11 @@ base64-js@^1.3.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
+
+base64-sol@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/base64-sol/-/base64-sol-1.0.1.tgz#91317aa341f0bc763811783c5729f1c2574600f6"
+  integrity sha512-ld3cCNMeXt4uJXmLZBHFGMvVpK9KsLVEhPpFRXnvSVAqABKbuNZg/+dsq3NuM+wxFLb/UrVkz7m1ciWmkMfTbg==
 
 bcrypt-pbkdf@^1.0.0:
   version "1.0.2"
@@ -7312,7 +7407,7 @@ web3-eth-abi@1.7.4:
     "@ethersproject/abi" "^5.6.3"
     web3-utils "1.7.4"
 
-web3-eth-abi@1.8.1, web3-eth-abi@^1.2.1, web3-eth-abi@^1.7.3:
+web3-eth-abi@1.8.1, web3-eth-abi@^1.2.1, web3-eth-abi@^1.7.3, web3-eth-abi@^1.7.4:
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/web3-eth-abi/-/web3-eth-abi-1.8.1.tgz#47455d6513217c4b0866fea6f97b1c4afa0b6535"
   integrity sha512-0mZvCRTIG0UhDhJwNQJgJxu4b4DyIpuMA0GTfqxqeuqzX4Q/ZvmoNurw0ExTfXaGPP82UUmmdkRi6FdZOx+C6w==

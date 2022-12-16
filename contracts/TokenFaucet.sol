@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import "./gERC20.sol";
 
 contract TokenFaucet is gERC20 {
-    uint256 TOKEN_CLAIM_ALLOWANCE = 10;
+    uint256 TOKEN_CLAIM_ALLOWANCE = 10 ether;
 
     constructor(
         string memory _name,

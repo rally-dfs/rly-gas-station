@@ -72,11 +72,43 @@ interface Types extends MessageTypes {
   RelayData: MessageTypeProperty[];
 }
 
+interface GsnPrimaryType {
+  RelayRequest: MessageTypeProperty[];
+  RelayData: MessageTypeProperty[];
+}
+
 export interface EIP712Domain {
   name?: string;
   version?: string;
   chainId?: number;
   verifyingContract?: string;
+}
+
+export class TypedGsnRequestData {
+  readonly types: GsnPrimaryType;
+  readonly domain: EIP712Domain;
+  readonly primaryType: string;
+  readonly message: any;
+
+  constructor(
+    name: string,
+    chainId: number,
+    verifier: Address,
+    relayRequest: any
+  ) {
+    this.types = {
+      RelayRequest: RelayRequestType,
+      RelayData: RelayDataType,
+    };
+    this.domain = getDomainSeparator(name, verifier, chainId);
+    this.primaryType = "RelayRequest";
+    // in the signature, all "request" fields are flattened out at the top structure.
+    // other params are inside "relayData" sub-type
+    this.message = {
+      ...relayRequest.request,
+      relayData: relayRequest.relayData,
+    };
+  }
 }
 
 export class TypedRequestData implements TypedMessage<Types> {
@@ -96,6 +128,7 @@ export class TypedRequestData implements TypedMessage<Types> {
       RelayRequest: RelayRequestType,
       RelayData: RelayDataType,
     };
+
     this.domain = getDomainSeparator(name, verifier, chainId);
     this.primaryType = "RelayRequest";
     // in the signature, all "request" fields are flattened out at the top structure.
