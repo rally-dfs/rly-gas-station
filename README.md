@@ -8,11 +8,11 @@ To test against a locally running instance of the gas station you need to have a
 
 1. start local node
 
-`npx hardhat node`
+`npm run start:local`
 
 2. deploy GSN contracts, start GSN relay server and `TokenFaucet.sol` contract. This will deploy the GSN contracts, start the GSN relay server and deploy the TokenFaucet.sol contract that can be used to test dusting of wallets (see below)
 
-`npm run deploy-local`
+`npm run deploy:local`
 
 With the GSN contracts deployes, relay server running and TokenFaucet.sol contract deployed you should be able to call the `claim()` method on the `TokenFaucet.sol` contract to dust the wallet with 10 units of the test ERC20 contract and the `transferFrom()` method to transfer any amount of tokens from the ERC20 contract without incurring any gas fees to the calling account.
 
@@ -20,7 +20,7 @@ There is an example of a client call to the `TokenFaucet.sol` contract using a G
 
 ## running tests
 
-To run tests on the `TokenFaucet.sol` or any other contract that you'd like to test you can run `npm run test-hardhat-node` this will spin up a local hardhat node and run the tests in `/tests` against that node.
+To run tests on the `TokenFaucet.sol` or any other contract that you'd like to test you can run `npm run test:local` this will spin up a local hardhat node and run the tests in `/tests` against that node.
 
 ## docker
 
@@ -46,3 +46,12 @@ paymaster deployed to 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
 forwarder deployed to 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
 token faucet deployed to 0x3Aa5ebB10DC797CAC828524e59A333d0A371443c```
 ````
+
+at this point you should be able to test the client example running `$ npx ts-node examples/clientExample.ts`
+
+## Mumbai Network
+
+All required contracts for testing on the polygon mumbai test network have been deployed. The deployed contract addresses can be found below
+
+Token Faucet: [0xD934Ac8fB32336C5a2b51dF6a97432C4De0594F3](https://mumbai.polygonscan.com/address/0xD934Ac8fB32336C5a2b51dF6a97432C4De0594F3)  
+GSN Contracts: [GSN docs](https://docs.opengsn.org/networks/polygon/mumbai.html)

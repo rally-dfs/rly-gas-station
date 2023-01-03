@@ -1,63 +1,74 @@
-import { GSNConfig } from "@opengsn/common";
-import { RelayProvider } from "@opengsn/provider";
-import { ethers } from "ethers";
-const Web3HttpProvider = require("web3-providers-http");
+import { BigNumber, ethers, Wallet } from "ethers";
 import * as TokenFaucet from "../artifacts/contracts/TokenFaucet.sol/TokenFaucet.json";
+import { gsnLightClient } from "./gsnClient/gsnClient";
+import { GsnTransactionDetails, rlyEnv } from "./gsnClient/utils";
 
-// contract addresses for locally deployed paymaster and token faucet
-const paymasterAddress = "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707";
-const tokenFaucetAddress = "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c";
-
-const getGSNProvider = async (): Promise<RelayProvider> => {
-  const web3provider = new Web3HttpProvider("http://localhost:8545");
-
-  const config = {
-    paymasterAddress,
-    auditorsCount: 0,
-    loggerConfiguration: {
-      logLevel: "info",
-    },
-  } as GSNConfig;
-
-  let gsnProvider = RelayProvider.newProvider({
-    provider: web3provider,
-    config,
-  });
-  await gsnProvider.init();
-
-  return gsnProvider;
-};
+// contract addresses for deployed token faucet
+const tokenFaucetAddress = "0xD934Ac8fB32336C5a2b51dF6a97432C4De0594F3";
 
 const clientExample = async () => {
   //get users wallet
   const account = ethers.Wallet.createRandom();
 
-  // get gsn provider for submitting txs to relayer
-  const gsnProvider = await getGSNProvider();
+  const gsnClient = new gsnLightClient(account, rlyEnv.mumbai);
+  await gsnClient.init();
 
-  //add user account to gsn provider
-  gsnProvider.addAccount(account.privateKey);
-
-  //wrap gsnProvider in ethersprovider for contract interactions
-  //ignoring type error here for now, need to reconcile provider type differences
-  //@ts-ignore
-  const etherProvider = new ethers.providers.Web3Provider(gsnProvider);
+  const web3provider = new ethers.providers.JsonRpcProvider(
+    "https://rpc.ankr.com/polygon_mumbai"
+  );
 
   //get instance of faucet contract at deployed address with the gsn provider and account as signer
   const faucet = new ethers.Contract(
     tokenFaucetAddress,
     TokenFaucet.abi,
-    etherProvider.getSigner(account.address)
+    web3provider
   );
 
+  //TODO: make this easier for dev
   //call claim method on contract, will be sent via GSN
-  await faucet.claim();
+  const tx = await faucet.populateTransaction.claim?.();
+  const gas = await faucet.estimateGas.claim?.();
+  const { maxFeePerGas, maxPriorityFeePerGas } =
+    await web3provider.getFeeData();
 
-  //get user token balance confirm that their balance has increased
-  const bal = await faucet.balanceOf(account.address);
+  const gsnTx = {
+    from: account.address,
+    data: tx.data,
+    value: "0",
+    to: tx.to,
+    gas: gas._hex,
+    maxFeePerGas: maxFeePerGas?._hex,
+    maxPriorityFeePerGas: maxPriorityFeePerGas?._hex,
+  } as GsnTransactionDetails;
 
-  console.log("user balance is post ", bal.toNumber());
-  return;
+  const balPre = await faucet.balanceOf(account.address);
+  const balPreEth = await web3provider.getBalance(account.address);
+
+  await gsnClient.relayTransaction(gsnTx);
+
+  const balPost = await faucet.balanceOf(account.address);
+  const balPostEth = await web3provider.getBalance(account.address);
+
+  console.log(
+    `balance for ${account.address} pre RLY = ${ethers.utils.formatEther(
+      balPre
+    )}`
+  );
+  console.log(
+    `balance for ${account.address} post RLY = ${ethers.utils.formatEther(
+      balPost
+    )}`
+  );
+  console.log(
+    `balance for ${account.address} pre ETH = ${ethers.utils.formatEther(
+      balPreEth
+    )}`
+  );
+  console.log(
+    `balance for ${account.address} post ETH = ${ethers.utils.formatEther(
+      balPostEth
+    )}`
+  );
 };
 
 clientExample().catch((error) => {
