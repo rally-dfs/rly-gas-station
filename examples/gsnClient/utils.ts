@@ -4,6 +4,7 @@ export type IntString = string;
 
 export enum rlyEnv {
   local = "local",
+  mumbai = "mumbai",
 }
 
 export interface AccountKeypair {

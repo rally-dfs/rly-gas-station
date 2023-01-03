@@ -98,7 +98,8 @@ export const getSenderNonce = async (
     forwarderAbi,
     provider
   );
-  const nonce = await forwarder.getNonce(sender);
+
+  const nonce = await forwarder.getNonce(sender, { from: sender });
   return nonce.toString();
 };
 

@@ -3,18 +3,18 @@ import * as TokenFaucet from "../artifacts/contracts/TokenFaucet.sol/TokenFaucet
 import { gsnLightClient } from "./gsnClient/gsnClient";
 import { GsnTransactionDetails, rlyEnv } from "./gsnClient/utils";
 
-// contract addresses for locally deployed paymaster and token faucet
-const tokenFaucetAddress = "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c";
+// contract addresses for deployed token faucet
+const tokenFaucetAddress = "0xD934Ac8fB32336C5a2b51dF6a97432C4De0594F3";
 
 const clientExample = async () => {
   //get users wallet
   const account = ethers.Wallet.createRandom();
 
-  const gsnClient = new gsnLightClient(account, rlyEnv.local);
+  const gsnClient = new gsnLightClient(account, rlyEnv.mumbai);
   await gsnClient.init();
 
   const web3provider = new ethers.providers.JsonRpcProvider(
-    "http://localhost:8545"
+    "https://rpc.ankr.com/polygon_mumbai"
   );
 
   //get instance of faucet contract at deployed address with the gsn provider and account as signer

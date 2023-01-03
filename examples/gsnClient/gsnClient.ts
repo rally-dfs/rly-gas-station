@@ -150,7 +150,7 @@ export class gsnLightClient {
     const relayMaxNonce = relayLastKnownNonce + config.maxRelayNonceGap;
 
     const metadata = {
-      domainSeparatorName: config.domainSeparatorName,
+      //domainSeparatorName: config.domainSeparatorName,
       maxAcceptanceBudget: config.maxAcceptanceBudget,
       relayHubAddress: config.relayHubAddress,
       signature,
