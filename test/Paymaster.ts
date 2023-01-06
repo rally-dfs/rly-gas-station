@@ -91,8 +91,6 @@ describe("Paymaster", () => {
       preEvents = await pm.queryFilter("RLYPaymasterPreCallValues");
       postEvents = await pm.queryFilter("RLYPaymasterPostCallValues");
 
-      console.log("TX HASH", preEvents[0].args?.txHash.toString());
-
       const afterTokenBalancealance = await faucet.balanceOf(from);
 
       tokenBalanceChange = BigNumber.from(afterTokenBalancealance).sub(

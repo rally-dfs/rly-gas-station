@@ -2,7 +2,7 @@ import { GsnTestEnvironment } from "@opengsn/cli";
 import { GSNConfig } from "@opengsn/common";
 import { RelayProvider } from "@opengsn/provider";
 import { assert } from "chai";
-import { Contract, ethers, BigNumber } from "ethers";
+import { Contract, ethers, BigNumber, Event } from "ethers";
 const Web3HttpProvider = require("web3-providers-http");
 import * as TokenFaucet from "../artifacts/contracts/TokenFaucet.sol/TokenFaucet.json";
 
@@ -58,11 +58,14 @@ describe("Faucet", () => {
 
   describe("dust wallet", async () => {
     let tokenBalanceChange: BigNumber;
+    let events: Event[];
     before(async () => {
       const beforeTokenBalance = await faucet.balanceOf(from);
       await faucet.claim();
 
       const afterTokenBalancealance = await faucet.balanceOf(from);
+
+      events = await faucet.queryFilter("Claim");
 
       tokenBalanceChange = BigNumber.from(afterTokenBalancealance).sub(
         BigNumber.from(beforeTokenBalance)
@@ -70,6 +73,10 @@ describe("Faucet", () => {
     });
     it("should increase token balance by 10", async () => {
       assert.equal(10, Number(ethers.utils.formatEther(tokenBalanceChange)));
+      assert.equal(
+        10,
+        Number(ethers.utils.formatEther(events[0].args?.amount))
+      );
     });
 
     it("should not pay for gas", async () => {
