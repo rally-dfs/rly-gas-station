@@ -32,7 +32,7 @@ describe("Faucet", () => {
       paymasterAddress,
       auditorsCount: 0,
       loggerConfiguration: {
-        logLevel: "debug",
+        logLevel: "error",
       },
     } as GSNConfig;
 

@@ -14,6 +14,23 @@ contract SingleRecipientPaymaster is BasePaymaster {
 
     event TargetChanged(address oldTarget, address newTarget);
 
+    event RLYPaymasterPreCallValues(
+        bytes txHash,
+        address relay,
+        address from,
+        bytes encodedFunction,
+        uint256 baseRelayFee,
+        uint256 gasLimit,
+        bytes approvalData,
+        uint256 maxPossibleGas
+    );
+
+    event RLYPaymasterPostCallValues(
+        bytes txHash,
+        uint256 clientId,
+        uint256 gasUsed
+    );
+
     constructor(address _target) {
         target = _target;
     }
@@ -25,7 +42,7 @@ contract SingleRecipientPaymaster is BasePaymaster {
         override
         returns (string memory)
     {
-        return "2.2.0+opengsn.recipient.ipaymaster";
+        return "3.0.0-beta.2";
     }
 
     function setTarget(address _target) external onlyOwner {
@@ -48,7 +65,24 @@ contract SingleRecipientPaymaster is BasePaymaster {
         require(relayRequest.request.to == target, "wrong target");
         //returning "true" means this paymaster accepts all requests that
         // are not rejected by the recipient contract.
-        return ("", true);
+
+        //hash request to use as identifier
+        bytes memory requestHash = abi.encodePacked(
+            keccak256((abi.encode(relayRequest.request)))
+        );
+
+        emit RLYPaymasterPreCallValues(
+            requestHash,
+            relayRequest.relayData.relayWorker,
+            relayRequest.request.from,
+            relayRequest.request.data,
+            relayRequest.relayData.maxFeePerGas,
+            relayRequest.request.gas,
+            approvalData,
+            maxPossibleGas
+        );
+
+        return (requestHash, true);
     }
 
     function _postRelayedCall(
@@ -58,5 +92,10 @@ contract SingleRecipientPaymaster is BasePaymaster {
         GsnTypes.RelayData calldata relayData
     ) internal virtual override {
         (context, success, gasUseWithoutPost, relayData);
+        emit RLYPaymasterPostCallValues(
+            context,
+            relayData.clientId,
+            gasUseWithoutPost
+        );
     }
 }
