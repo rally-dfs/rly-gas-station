@@ -88,6 +88,20 @@ contract MethodWhitelistPaymaster is BasePaymaster {
         return (requestHash, true);
     }
 
+    function _postRelayedCall(
+        bytes calldata context,
+        bool success,
+        uint256 gasUseWithoutPost,
+        GsnTypes.RelayData calldata relayData
+    ) internal virtual override {
+        (context, success, gasUseWithoutPost, relayData);
+        emit RLYPaymasterPostCallValues(
+            context,
+            relayData.clientId,
+            gasUseWithoutPost
+        );
+    }
+
     function _emitPreCallEvent(
         GsnTypes.RelayRequest calldata relayRequest,
         bytes memory requestHash,
@@ -105,20 +119,6 @@ contract MethodWhitelistPaymaster is BasePaymaster {
             approvalData,
             maxPossibleGas,
             relayRequest.relayData.clientId
-        );
-    }
-
-    function _postRelayedCall(
-        bytes calldata context,
-        bool success,
-        uint256 gasUseWithoutPost,
-        GsnTypes.RelayData calldata relayData
-    ) internal virtual override {
-        (context, success, gasUseWithoutPost, relayData);
-        emit RLYPaymasterPostCallValues(
-            context,
-            relayData.clientId,
-            gasUseWithoutPost
         );
     }
 }
