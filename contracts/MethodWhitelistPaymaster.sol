@@ -9,20 +9,19 @@ import "@opengsn/contracts/src/BasePaymaster.sol";
  * - reject requests if destination is not the target contract.
  * - reject any request if the target contract reverts.
  */
-contract SingleRecipientPaymaster is BasePaymaster {
-    address public target;
-
-    event TargetChanged(address oldTarget, address newTarget);
+contract MethodWhitelistPaymaster is BasePaymaster {
+    mapping(address => mapping(bytes4 => bool)) public methodWhitelist;
 
     event RLYPaymasterPreCallValues(
         bytes txHash,
         address relay,
         address from,
-        bytes encodedFunction,
+        bytes4 method,
         uint256 baseRelayFee,
         uint256 gasLimit,
         bytes approvalData,
-        uint256 maxPossibleGas
+        uint256 maxPossibleGas,
+        uint256 clientId
     );
 
     event RLYPaymasterPostCallValues(
@@ -31,8 +30,16 @@ contract SingleRecipientPaymaster is BasePaymaster {
         uint256 gasUsed
     );
 
-    constructor(address _target) {
-        target = _target;
+    constructor(address _target, bytes4 _method) {
+        return setMethodWhitelist(_target, _method, true);
+    }
+
+    function setMethodWhitelist(
+        address target,
+        bytes4 method,
+        bool isAllowed
+    ) public onlyOwner {
+        methodWhitelist[target][method] = isAllowed;
     }
 
     function versionPaymaster()
@@ -43,11 +50,6 @@ contract SingleRecipientPaymaster is BasePaymaster {
         returns (string memory)
     {
         return "3.0.0-beta.2";
-    }
-
-    function setTarget(address _target) external onlyOwner {
-        emit TargetChanged(target, _target);
-        target = _target;
     }
 
     function _preRelayedCall(
@@ -62,7 +64,11 @@ contract SingleRecipientPaymaster is BasePaymaster {
         returns (bytes memory context, bool revertOnRecipientRevert)
     {
         (relayRequest, signature, approvalData, maxPossibleGas);
-        require(relayRequest.request.to == target, "wrong target");
+        bytes4 method = GsnUtils.getMethodSig(relayRequest.request.data);
+        require(
+            methodWhitelist[relayRequest.request.to][method],
+            "target not whitelisted"
+        );
         //returning "true" means this paymaster accepts all requests that
         // are not rejected by the recipient contract.
 
@@ -71,18 +77,35 @@ contract SingleRecipientPaymaster is BasePaymaster {
             keccak256((abi.encode(relayRequest.request)))
         );
 
-        emit RLYPaymasterPreCallValues(
+        _emitPreCallEvent(
+            relayRequest,
             requestHash,
-            relayRequest.relayData.relayWorker,
-            relayRequest.request.from,
-            relayRequest.request.data,
-            relayRequest.relayData.maxFeePerGas,
-            relayRequest.request.gas,
+            method,
             approvalData,
             maxPossibleGas
         );
 
         return (requestHash, true);
+    }
+
+    function _emitPreCallEvent(
+        GsnTypes.RelayRequest calldata relayRequest,
+        bytes memory requestHash,
+        bytes4 method,
+        bytes calldata approvalData,
+        uint256 maxPossibleGas
+    ) private {
+        emit RLYPaymasterPreCallValues(
+            requestHash,
+            relayRequest.relayData.relayWorker,
+            relayRequest.request.from,
+            method,
+            relayRequest.relayData.maxFeePerGas,
+            relayRequest.request.gas,
+            approvalData,
+            maxPossibleGas,
+            relayRequest.relayData.clientId
+        );
     }
 
     function _postRelayedCall(

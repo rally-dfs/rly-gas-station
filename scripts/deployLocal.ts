@@ -2,7 +2,7 @@ import { GsnTestEnvironment } from "@opengsn/cli";
 import { ethers } from "ethers";
 const Web3HttpProvider = require("web3-providers-http");
 import * as TokenFaucet from "../artifacts/contracts/TokenFaucet.sol/TokenFaucet.json";
-import * as Paymaster from "../artifacts/contracts/SingleRecipientPaymaster.sol/SingleRecipientPaymaster.json";
+import * as Paymaster from "../artifacts/contracts/MethodWhitelistPaymaster.sol/MethodWhitelistPaymaster.json
 const relayHubAbi = require("@opengsn/common/dist/interfaces/IRelayHub.json");
 
 async function main() {

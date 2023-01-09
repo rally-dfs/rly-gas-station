@@ -5,7 +5,7 @@ import { assert } from "chai";
 import { Contract, ethers, BigNumber, Event } from "ethers";
 const Web3HttpProvider = require("web3-providers-http");
 import * as TokenFaucet from "../artifacts/contracts/TokenFaucet.sol/TokenFaucet.json";
-import * as Paymaster from "../artifacts/contracts/SingleRecipientPaymaster.sol/SingleRecipientPaymaster.json";
+import * as Paymaster from "../artifacts/contracts/MethodWhitelistPaymaster.sol/MethodWhitelistPaymaster.json";
 
 describe("Paymaster", () => {
   let faucet: Contract;
@@ -42,7 +42,8 @@ describe("Paymaster", () => {
 
     await faucet.deployed();
 
-    pm = await paymasterFactory.deploy(faucet.address);
+    const methodId = faucet.interface.getSighash("claim");
+    pm = await paymasterFactory.deploy(faucet.address, methodId);
 
     await pm.setRelayHub(relayHubAddress!);
     await pm.setTrustedForwarder(forwarderAddress!);
