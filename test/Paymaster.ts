@@ -1,7 +1,7 @@
 import { GsnTestEnvironment } from "@opengsn/cli";
 import { GSNConfig } from "@opengsn/common";
 import { RelayProvider } from "@opengsn/provider";
-import { assert } from "chai";
+import { assert, expect } from "chai";
 import { Contract, ethers, BigNumber, Event } from "ethers";
 const Web3HttpProvider = require("web3-providers-http");
 import * as TokenFaucet from "../artifacts/contracts/TokenFaucet.sol/TokenFaucet.json";
@@ -106,6 +106,18 @@ describe("Paymaster", () => {
     });
     it("from address in pre event to be equal to tx sender", async () => {
       assert.equal(from, preEvents[0].args?.from);
+    });
+  });
+
+  describe("method whitelisting", async () => {
+    it("method that has been whitelisted should succeed", async () => {
+      await expect(faucet.claim()).to.eventually.have.property("hash");
+    });
+
+    it("method that hasn't been whitelisted should fail", async () => {
+      await expect(
+        faucet.transfer(to, ethers.utils.parseEther("5"))
+      ).to.eventually.be.rejectedWith(Error);
     });
   });
 });
