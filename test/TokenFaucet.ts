@@ -17,7 +17,7 @@ describe("Faucet", () => {
       contractsDeployment: { paymasterAddress, forwarderAddress },
     } = await GsnTestEnvironment.startGsn("localhost", 8090);
 
-    web3provider = new Web3HttpProvider("http://localhost:8545");
+    web3provider = new Web3HttpProvider("http://127.0.0.1:8545/");
     const deploymentProvider = new ethers.providers.Web3Provider(web3provider);
     const factory = new ethers.ContractFactory(
       TokenFaucet.abi,

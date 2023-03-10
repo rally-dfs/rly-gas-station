@@ -24,12 +24,13 @@
     "@opengsn/paymasters": "^3.0.0-beta.2",
     "axios": "^1.2.1",
     "dotenv": "^16.0.3",
+    "eth-permit": "^0.2.3",
     "ethers": "^5.7.2"
   },
   "scripts": {
     "start:local": "npx hardhat --config hardhat.config.ts node",
     "deploy:local": "npx hardhat run --config hardhat.config.ts --network localhost scripts/deployLocal.ts",
     "test:local": "npx run-with-hardhat-node 'hardhat test  --config hardhat.config.ts'",
-    "deploy:testnet":"npx hardhat run --config hardhat.config.ts --network polygon_mumbai scripts/deployTestnet.ts"
+    "deploy:testnet": "npx hardhat run --config hardhat.config.ts --network polygon_mumbai scripts/deployTestnet.ts"
   }
 }

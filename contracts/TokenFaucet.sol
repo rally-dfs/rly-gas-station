@@ -1,19 +1,22 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import "./gERC20.sol";
+import "./GsnERC20.sol";
 
-contract TokenFaucet is gERC20 {
+contract TokenFaucet is GsnERC20 {
     uint256 TOKEN_CLAIM_ALLOWANCE = 10 ether;
 
     event Claim(address sender, uint256 amount);
+
+    //set forwarder
+    //
 
     constructor(
         string memory _name,
         string memory _symbol,
         uint8 _decimals,
         address _forwarder
-    ) gERC20(_name, _symbol, _decimals) {
+    ) GsnERC20(_name, _symbol, _decimals) {
         _setTrustedForwarder(_forwarder);
     }
 

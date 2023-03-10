@@ -5,7 +5,7 @@ import { assert, expect } from "chai";
 import { Contract, ethers, BigNumber, Event } from "ethers";
 const Web3HttpProvider = require("web3-providers-http");
 import * as TokenFaucet from "../artifacts/contracts/TokenFaucet.sol/TokenFaucet.json";
-import * as Paymaster from "../artifacts/contracts/MethodWhitelistPaymaster.sol/MethodWhitelistPaymaster.json";
+import * as Paymaster from "../artifacts/contracts/RLYPaymaster.sol/RLYPaymaster.json";
 
 describe("Paymaster", () => {
   let faucet: Contract;
@@ -19,7 +19,7 @@ describe("Paymaster", () => {
       contractsDeployment: { forwarderAddress, relayHubAddress },
     } = await GsnTestEnvironment.startGsn("localhost", 8090);
 
-    web3provider = new Web3HttpProvider("http://localhost:8545");
+    web3provider = new Web3HttpProvider("http://127.0.0.1:8545/");
     const deploymentProvider = new ethers.providers.Web3Provider(web3provider);
     const faucetFactory = new ethers.ContractFactory(
       TokenFaucet.abi,
@@ -82,27 +82,24 @@ describe("Paymaster", () => {
   });
 
   describe("test events", async () => {
-    let tokenBalanceChange: BigNumber;
     let preEvents: Event[];
     let postEvents: Event[];
+    let claimEvents: Event[];
 
     before(async () => {
-      const beforeTokenBalance = await faucet.balanceOf(from);
       await faucet.claim();
       preEvents = await pm.queryFilter("RLYPaymasterPreCallValues");
       postEvents = await pm.queryFilter("RLYPaymasterPostCallValues");
-
-      const afterTokenBalancealance = await faucet.balanceOf(from);
-
-      tokenBalanceChange = BigNumber.from(afterTokenBalancealance).sub(
-        BigNumber.from(beforeTokenBalance)
-      );
+      claimEvents = await faucet.queryFilter("Claim");
     });
     it("txhash of pre and post call should be equal", async () => {
       assert.equal(
         preEvents[0].args?.txHash.toString(),
         postEvents[0].args?.txHash.toString()
       );
+    });
+    it("sender address in claim event should be equal to from address", async () => {
+      assert.equal(from, claimEvents[0].args?.sender);
     });
     it("from address in pre event to be equal to tx sender", async () => {
       assert.equal(from, preEvents[0].args?.from);
