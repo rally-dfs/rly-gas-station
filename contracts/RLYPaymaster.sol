@@ -151,7 +151,7 @@ contract RLYPaymaster is BasePaymaster {
         override
     {
         // We override GNS default behavior as not every call we do requires the recipient contract to trust the forwarder
-        // Some contracts are entirely permisionless and the contract does not care about who calls it.
+        // In the case of the default ERC20 contracts executeNativeMetaTransaction on polygon signature checks are done in the contract not in the forawarder
         // This check is now optionally performed in `_preRelayedCall(..)`
     }
 }
