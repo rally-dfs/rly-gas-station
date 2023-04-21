@@ -4,9 +4,11 @@ import { RelayProvider } from "@opengsn/provider";
 import { assert } from "chai";
 import { Contract, ethers, BigNumber, Event } from "ethers";
 const Web3HttpProvider = require("web3-providers-http");
+import * as posRLYTestERC20 from "../artifacts/contracts/posRLYTestERC20.sol/posRLYTestERC20.json";
 import * as TokenFaucet from "../artifacts/contracts/TokenFaucet.sol/TokenFaucet.json";
 
 describe("Faucet", () => {
+  let token: Contract;
   let faucet: Contract;
   let from: string;
   let to: string;
@@ -19,13 +21,23 @@ describe("Faucet", () => {
 
     web3provider = new Web3HttpProvider("http://127.0.0.1:8545/");
     const deploymentProvider = new ethers.providers.Web3Provider(web3provider);
+    const erc20Factory = new ethers.ContractFactory(
+      posRLYTestERC20.abi,
+      posRLYTestERC20.bytecode,
+      deploymentProvider.getSigner()
+    );
+
     const factory = new ethers.ContractFactory(
       TokenFaucet.abi,
       TokenFaucet.bytecode,
       deploymentProvider.getSigner()
     );
 
-    faucet = await factory.deploy("Cool Token", "CT", 18, forwarderAddress);
+
+    token = await erc20Factory.deploy();
+    await token.deployed();
+
+    faucet = await factory.deploy(token.address, ethers.utils.parseEther("10"), forwarderAddress);
     await faucet.deployed();
 
     const config = {
@@ -54,16 +66,26 @@ describe("Faucet", () => {
     const etherProvider = new ethers.providers.Web3Provider(gsnProvider);
 
     faucet = faucet.connect(etherProvider.getSigner(from));
+    token = token.connect(deploymentProvider.getSigner());
+
+    await token.initialize(
+      "Rally Polygon",
+      "pRLY",
+      18,
+      from,
+      ethers.utils.parseEther("1000000")
+    );
+    await token.transfer(faucet.address, ethers.utils.parseEther("100"))
   });
 
   describe("dust wallet", async () => {
     let tokenBalanceChange: BigNumber;
     let events: Event[];
     before(async () => {
-      const beforeTokenBalance = await faucet.balanceOf(from);
+      const beforeTokenBalance = await token.balanceOf(from);
       await faucet.claim();
 
-      const afterTokenBalancealance = await faucet.balanceOf(from);
+      const afterTokenBalancealance = await token.balanceOf(from);
 
       events = await faucet.queryFilter("Claim");
 
@@ -80,37 +102,6 @@ describe("Faucet", () => {
     });
 
     it("should not pay for gas", async () => {
-      assert.equal(0, (await faucet.provider.getBalance(from)).toNumber());
-    });
-  });
-  describe("transfer token", async () => {
-    let fromBalanceChange: BigNumber;
-    let toBalanceChange: BigNumber;
-    before(async () => {
-      const beforeTokenBalanceFrom = await faucet.balanceOf(from);
-      const beforeTokenBalanceTo = await faucet.balanceOf(to);
-      const gas = await faucet.estimateGas.transfer(
-        to,
-        ethers.utils.parseEther("5")
-      );
-      await faucet.transfer(to, ethers.utils.parseEther("5"));
-      const afterTokenBalanceFrom = await faucet.balanceOf(from);
-      const afterTokenBalanceTo = await faucet.balanceOf(to);
-
-      fromBalanceChange = BigNumber.from(afterTokenBalanceFrom).sub(
-        BigNumber.from(beforeTokenBalanceFrom)
-      );
-      toBalanceChange = BigNumber.from(afterTokenBalanceTo).sub(
-        BigNumber.from(beforeTokenBalanceTo)
-      );
-    });
-    it("should decrease from token balance by 5", async () => {
-      assert.equal(-5, Number(ethers.utils.formatEther(fromBalanceChange)));
-    });
-    it("should increase to token balance by 5", async () => {
-      assert.equal(5, Number(ethers.utils.formatEther(toBalanceChange)));
-    });
-    it("should not have paid for gas", async () => {
       assert.equal(0, (await faucet.provider.getBalance(from)).toNumber());
     });
   });
