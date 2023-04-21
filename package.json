@@ -30,6 +30,6 @@
     "start:local": "npx hardhat --config hardhat.config.ts node",
     "deploy:local": "npx hardhat run --config hardhat.config.ts --network localhost scripts/deployLocal.ts",
     "test:local": "npx run-with-hardhat-node 'hardhat test  --config hardhat.config.ts'",
-    "deploy:testnet":"npx hardhat run --config hardhat.config.ts --network polygon_mumbai scripts/deployTestnet.ts"
+    "deploy:testnet": "npx hardhat run --config hardhat.config.ts --network polygon_mumbai scripts/deployTestnet.ts"
   }
 }

@@ -9,8 +9,17 @@ import "@opengsn/contracts/src/BasePaymaster.sol";
  * - reject requests if destination is not the target contract.
  * - reject any request if the target contract reverts.
  */
-contract MethodWhitelistPaymaster is BasePaymaster {
-    mapping(address => mapping(bytes4 => bool)) public methodWhitelist;
+contract RLYPaymaster is BasePaymaster {
+    //mapping(address => mapping(bytes4 => bool)) public methodWhitelist;
+
+    struct MethodOptions {
+        bool ignoreTrustedForwarder;
+        bool isAllowed;
+    }
+
+    mapping(bytes32 => MethodOptions) public methodWhiteList;
+
+    event WhiteListMethodSet();
 
     event RLYPaymasterPreCallValues(
         bytes txHash,
@@ -31,15 +40,20 @@ contract MethodWhitelistPaymaster is BasePaymaster {
     );
 
     constructor(address _target, bytes4 _method) {
-        return setMethodWhitelist(_target, _method, true);
+        return setMethodWhitelist(_target, _method, false, true);
     }
 
     function setMethodWhitelist(
         address target,
         bytes4 method,
-        bool isAllowed
+        bool _ignoreTrustedForwarder,
+        bool _isAllowed
     ) public onlyOwner {
-        methodWhitelist[target][method] = isAllowed;
+        bytes32 _hash = keccak256((abi.encode(target, method)));
+        methodWhiteList[_hash] = MethodOptions({
+            ignoreTrustedForwarder: _ignoreTrustedForwarder,
+            isAllowed: _isAllowed
+        });
     }
 
     function versionPaymaster()
@@ -64,13 +78,21 @@ contract MethodWhitelistPaymaster is BasePaymaster {
         returns (bytes memory context, bool revertOnRecipientRevert)
     {
         (relayRequest, signature, approvalData, maxPossibleGas);
-        bytes4 method = GsnUtils.getMethodSig(relayRequest.request.data);
-        require(
-            methodWhitelist[relayRequest.request.to][method],
-            "target not whitelisted"
-        );
-        //returning "true" means this paymaster accepts all requests that
-        // are not rejected by the recipient contract.
+        address _to = relayRequest.request.to;
+        bytes4 _method = GsnUtils.getMethodSig(relayRequest.request.data);
+
+        MethodOptions memory _methodOptions = methodWhiteList[
+            keccak256(abi.encode(_to, _method))
+        ];
+
+        //verify that this method is whitelisted
+
+        require(_methodOptions.isAllowed, "target not whitelisted");
+
+        //verify trusted forwarder if required by method
+        if (!_methodOptions.ignoreTrustedForwarder) {
+            GsnEip712Library.verifyForwarderTrusted(relayRequest);
+        }
 
         //hash request to use as identifier
         bytes memory requestHash = abi.encodePacked(
@@ -80,7 +102,7 @@ contract MethodWhitelistPaymaster is BasePaymaster {
         _emitPreCallEvent(
             relayRequest,
             requestHash,
-            method,
+            _method,
             approvalData,
             maxPossibleGas
         );
@@ -120,5 +142,16 @@ contract MethodWhitelistPaymaster is BasePaymaster {
             maxPossibleGas,
             relayRequest.relayData.clientId
         );
+    }
+
+    function _verifyForwarder(GsnTypes.RelayRequest calldata relayRequest)
+        internal
+        view
+        virtual
+        override
+    {
+        // We override GNS default behavior as not every call we do requires the recipient contract to trust the forwarder
+        // In the case of the default ERC20 contracts executeNativeMetaTransaction on polygon signature checks are done in the contract not in the forawarder
+        // This check is now optionally performed in `_preRelayedCall(..)`
     }
 }

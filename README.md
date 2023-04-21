@@ -4,7 +4,7 @@ This repo allows you to use the gas station network locally for both running tes
 
 ## local development
 
-To test against a locally running instance of the gas station you need to have a hardhat ethereum node running on localhost, you need to deploy the gas station network contracts and you need to deploy the `TokenFaucet.sol` contract. This can be done with the following commands.
+To test against a locally running instance of the gas station network you need to have a hardhat ethereum node running on localhost, you need to deploy the gas station network contracts and you need to deploy the `TokenFaucet.sol` contract. This can be done with the following commands.
 
 1. start local node
 
@@ -53,5 +53,5 @@ at this point you should be able to test the client example running `$ npx ts-no
 
 All required contracts for testing on the polygon mumbai test network have been deployed. The deployed contract addresses can be found below
 
-Token Faucet: [0xD934Ac8fB32336C5a2b51dF6a97432C4De0594F3](https://mumbai.polygonscan.com/address/0xD934Ac8fB32336C5a2b51dF6a97432C4De0594F3)  
+Token Faucet: [0x946B1A4eA6457b285254Facb54B896Ab0fAE3a7C](https://mumbai.polygonscan.com/address/0x946B1A4eA6457b285254Facb54B896Ab0fAE3a7C)  
 GSN Contracts: [GSN docs](https://docs.opengsn.org/networks/polygon/mumbai.html)
