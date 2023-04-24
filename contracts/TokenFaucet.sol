@@ -1,31 +1,35 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import "./GsnERC20.sol";
+import "@opengsn/contracts/src/ERC2771Recipient.sol";
+import "./IERC20.sol";
 
-contract TokenFaucet is GsnERC20 {
-    uint256 TOKEN_CLAIM_ALLOWANCE = 10 ether;
+contract TokenFaucet is ERC2771Recipient {
+    IERC20 public immutable token;
+    uint256 public immutable claimAllowance;
+
+    mapping(address => bool) private claimedAddresses;
 
     event Claim(address sender, uint256 amount);
 
-    //set forwarder
-    //
-
     constructor(
-        string memory _name,
-        string memory _symbol,
-        uint8 _decimals,
+        address _token,
+        uint256 _claimAllowance,
         address _forwarder
-    ) GsnERC20(_name, _symbol, _decimals) {
+    ) {
+        token = IERC20(_token);
+        claimAllowance = _claimAllowance;
         _setTrustedForwarder(_forwarder);
     }
 
     function claim() public returns (bool) {
         address sender = _msgSender();
-        _mint(sender, TOKEN_CLAIM_ALLOWANCE);
-        emit Claim(sender, TOKEN_CLAIM_ALLOWANCE);
+        require(!claimedAddresses[sender], "Address has already received tokens.");
+        require(token.balanceOf(address(this)) >= claimAllowance, "Insufficient faucet balance.");
+
+        claimedAddresses[sender] = true;
+        token.transfer(sender, claimAllowance);
+        emit Claim(sender, claimAllowance);
         return true;
     }
-
-    receive() external payable {}
 }
