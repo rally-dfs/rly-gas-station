@@ -1,29 +1,17 @@
 import { GsnTestEnvironment } from "@opengsn/cli";
+import hre from "hardhat";
 import { ethers } from "ethers";
-const Web3HttpProvider = require("web3-providers-http");
-import * as TokenFaucet from "../artifacts/contracts/TokenFaucet.sol/TokenFaucet.json";
-import * as Paymaster from "../artifacts/contracts/RLYPaymaster.sol/RLYPaymaster.json";
 const relayHubAbi = require("@opengsn/common/dist/interfaces/IRelayHub.json");
 
 async function main() {
   const env = await GsnTestEnvironment.startGsn("localhost", 8090);
   const { contractsDeployment } = env;
 
-  const web3provider = new Web3HttpProvider("http://127.0.0.1:8545/");
+  const accounts = await hre.ethers.getSigners();
 
-  const deploymentProvider = new ethers.providers.Web3Provider(web3provider);
+  const deployer = accounts[0];
 
-  const fFactory = new ethers.ContractFactory(
-    TokenFaucet.abi,
-    TokenFaucet.bytecode,
-    deploymentProvider.getSigner()
-  );
-
-  const pFactor = new ethers.ContractFactory(
-    Paymaster.abi,
-    Paymaster.bytecode,
-    deploymentProvider.getSigner()
-  );
+  const Paymaster = await hre.ethers.getContractFactory("RLYPaymaster");
 
   if (!contractsDeployment.relayHubAddress) {
     throw "relay hub not deployed";
@@ -32,20 +20,54 @@ async function main() {
   const relayHub = new ethers.Contract(
     contractsDeployment.relayHubAddress,
     relayHubAbi,
-    deploymentProvider.getSigner()
+    deployer
   );
 
-  const faucet = await fFactory.deploy(
-    "Cool Token",
-    "CT",
+  //deploy test rly token
+  const Token = await hre.ethers.getContractFactory("posRLYTestERC20");
+
+  const token = await Token.deploy();
+  await token.deployed();
+
+  await token.initialize(
+    "Rally Polygon",
+    "pRLY",
     18,
+    deployer.address,
+    ethers.utils.parseEther("15000000000")
+  );
+
+  // deploy faucet
+  const Faucet = await hre.ethers.getContractFactory("TokenFaucet");
+
+  const faucet = await Faucet.deploy(
+    token.address,
+    ethers.utils.parseEther("10"),
     contractsDeployment.forwarderAddress
   );
   await faucet.deployed();
 
-  const methodId = faucet.interface.getSighash("claim");
+  token.connect(deployer);
 
-  const paymaster = await pFactor.deploy(faucet.address, methodId);
+  await token.transfer(faucet.address, ethers.utils.parseEther("1000000"));
+
+  const methodId = faucet.interface.getSighash("claim");
+  const methodIdTransfer = token.interface.getSighash("transfer");
+  const methodIdExecute = token.interface.getSighash("executeMetaTransaction");
+  const paymaster = await Paymaster.deploy(faucet.address, methodId);
+
+  await paymaster.setMethodWhitelist(
+    token.address,
+    methodIdExecute,
+    true,
+    true
+  );
+  await paymaster.setMethodWhitelist(
+    token.address,
+    methodIdTransfer,
+    true,
+    true
+  );
 
   //
   await paymaster.setRelayHub(contractsDeployment.relayHubAddress);
