@@ -10,8 +10,12 @@ const config: HardhatUserConfig = {
       chainId: 1337,
     },
     polygon_mumbai: {
-      url: `${process.env.RPC_URL}`,
-      accounts: [`0x${process.env.PRIVATE_KEY}`],
+      url: `${process.env.RPC_URL_TESTNET}`,
+      accounts: [`0x${process.env.PRIVATE_KEY_TESTNET}`],
+    },
+    polygon_mainnet: {
+      url: `${process.env.RPC_URL_MAINNET}`,
+      accounts: [`0x${process.env.PRIVATE_KEY_MAINNET}`],
     },
   },
 };
