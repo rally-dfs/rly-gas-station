@@ -172,7 +172,9 @@ contract RLYPaymaster is BasePaymaster {
             );
             require(
                 successTx,
-                string(abi.encodePacked("permit call reverted:", string(ret)))
+                string(
+                    abi.encodePacked("transferFrom call reverted:", string(ret))
+                )
             );
         }
     }
