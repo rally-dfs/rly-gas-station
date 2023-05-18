@@ -41,20 +41,16 @@ contract RLYPaymaster is BasePaymaster {
         uint256 gasUsed
     );
 
-    constructor(address _target, bytes4 _method) {
-        return setMethodWhitelist(_target, _method, true, true);
-    }
-
     function setMethodWhitelist(
         address target,
         bytes4 method,
-        bool _ignoreTrustedForwarder,
-        bool _isAllowed
+        bool ignoreTrustedForwarder,
+        bool isAllowed
     ) public onlyOwner {
         bytes32 _hash = keccak256((abi.encode(target, method)));
         methodWhiteList[_hash] = MethodOptions({
-            ignoreTrustedForwarder: _ignoreTrustedForwarder,
-            isAllowed: _isAllowed
+            ignoreTrustedForwarder: ignoreTrustedForwarder,
+            isAllowed: isAllowed
         });
     }
 
@@ -80,19 +76,19 @@ contract RLYPaymaster is BasePaymaster {
         returns (bytes memory context, bool revertOnRecipientRevert)
     {
         (relayRequest, signature, approvalData, maxPossibleGas);
-        address _to = relayRequest.request.to;
+        address to = relayRequest.request.to;
         bytes4 method = GsnUtils.getMethodSig(relayRequest.request.data);
 
-        MethodOptions memory _methodOptions = methodWhiteList[
-            keccak256(abi.encode(_to, method))
+        MethodOptions memory methodOptions = methodWhiteList[
+            keccak256(abi.encode(to, method))
         ];
 
         //verify that this method is whitelisted
 
-        require(_methodOptions.isAllowed, "target not whitelisted");
+        require(methodOptions.isAllowed, "target not whitelisted");
 
         //verify trusted forwarder if required by method
-        if (!_methodOptions.ignoreTrustedForwarder) {
+        if (!methodOptions.ignoreTrustedForwarder) {
             GsnEip712Library.verifyForwarderTrusted(relayRequest);
         }
 
@@ -191,5 +187,8 @@ contract RLYPaymaster is BasePaymaster {
 
     function _verifyPaymasterData(
         GsnTypes.RelayRequest calldata relayRequest
-    ) internal view virtual override {}
+    ) internal view virtual override {
+        // we overide default behavior of the GSN Basepaymaster since it verifys that paymasterData length = 0
+        /// paymaster data is now used, but only after permit has been called and it is validated at that point.
+    }
 }

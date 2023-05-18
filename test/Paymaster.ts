@@ -53,7 +53,8 @@ describe("Paymaster", () => {
     await faucet.deployed();
 
     const methodId = faucet.interface.getSighash("claim");
-    pm = await paymasterFactory.deploy(faucet.address, methodId);
+    pm = await paymasterFactory.deploy();
+    pm.setMethodWhitelist(faucet.address, methodId, true, true);
 
     await pm.setRelayHub(relayHubAddress!);
     await pm.setTrustedForwarder(forwarderAddress!);

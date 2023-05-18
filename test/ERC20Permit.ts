@@ -48,8 +48,8 @@ describe("erc20Permit", () => {
     const methodIdPermit = token.interface.getSighash("permit");
     forwarder = forwarderAddress;
     relayHub = relayHubAddress;
-    pm = await paymasterFactory.deploy(token.address, methodIdPermit);
-
+    pm = await paymasterFactory.deploy();
+    await pm.setMethodWhitelist(token.address, methodIdPermit, true, true);
     await pm.setRelayHub(relayHubAddress!);
     await pm.setTrustedForwarder(forwarderAddress!);
 

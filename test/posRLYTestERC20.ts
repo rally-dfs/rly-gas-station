@@ -45,10 +45,11 @@ describe("posRLYTestERC20", () => {
     const methodIdExecute = token.interface.getSighash(
       "executeMetaTransaction"
     );
-    pm = await paymasterFactory.deploy(token.address, methodIdTransfer);
+    pm = await paymasterFactory.deploy();
 
     await pm.setRelayHub(relayHubAddress!);
     await pm.setTrustedForwarder(forwarderAddress!);
+    await pm.setMethodWhitelist(token.address, methodIdTransfer, true, true);
     await pm.setMethodWhitelist(token.address, methodIdExecute, true, true);
 
     await deploymentProvider.getSigner().sendTransaction({
