@@ -12,11 +12,7 @@ contract TokenFaucet is ERC2771Recipient {
 
     event Claim(address sender, uint256 amount);
 
-    constructor(
-        address _token,
-        uint256 _claimAllowance,
-        address _forwarder
-    ) {
+    constructor(address _token, uint256 _claimAllowance, address _forwarder) {
         token = IERC20(_token);
         claimAllowance = _claimAllowance;
         _setTrustedForwarder(_forwarder);
@@ -24,8 +20,14 @@ contract TokenFaucet is ERC2771Recipient {
 
     function claim() public returns (bool) {
         address sender = _msgSender();
-        require(!claimedAddresses[sender], "Address has already received tokens.");
-        require(token.balanceOf(address(this)) >= claimAllowance, "Insufficient faucet balance.");
+        require(
+            !claimedAddresses[sender],
+            "Address has already received tokens."
+        );
+        require(
+            token.balanceOf(address(this)) >= claimAllowance,
+            "Insufficient faucet balance."
+        );
 
         claimedAddresses[sender] = true;
         token.transfer(sender, claimAllowance);

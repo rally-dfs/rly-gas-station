@@ -6,7 +6,7 @@ import { Contract, ethers } from "ethers";
 const Web3HttpProvider = require("web3-providers-http");
 import * as posRLYTestERC20 from "../artifacts/contracts/posRLYTestERC20.sol/posRLYTestERC20.json";
 import * as Paymaster from "../artifacts/contracts/RLYPaymaster.sol/RLYPaymaster.json";
-import { getTypedData } from "./metaTx712";
+import { getTypedMetaTransactionData } from "./metaTx712";
 
 describe("posRLYTestERC20", () => {
   let token: Contract;
@@ -118,7 +118,7 @@ describe("posRLYTestERC20", () => {
       const { chainId } = await web3provider.getNetwork();
 
       // typed data for signing
-      const eip712Data = getTypedData({
+      const eip712Data = getTypedMetaTransactionData({
         name,
         version: "1",
         salt: ethers.utils.hexZeroPad(ethers.utils.hexlify(chainId), 32),
