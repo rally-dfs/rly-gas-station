@@ -159,6 +159,10 @@ contract RLYPaymaster is BasePaymaster {
     ) private {
         if (method == IERC20Permit.permit.selector) {
             bytes calldata paymasterData = relayData.paymasterData;
+            require(
+                paymasterData.length >= 24,
+                "must contain address and method"
+            );
             IERC20 token = IERC20(address(bytes20(paymasterData[:20])));
 
             require(
@@ -167,15 +171,8 @@ contract RLYPaymaster is BasePaymaster {
                 "invalid method"
             );
 
-            (bool successTx, bytes memory ret) = address(token).call(
-                paymasterData[20:]
-            );
-            require(
-                successTx,
-                string(
-                    abi.encodePacked("transferFrom call reverted:", string(ret))
-                )
-            );
+            (bool successTx, ) = address(token).call(paymasterData[20:]);
+            require(successTx, "transferFrom call reverted");
         }
     }
 
