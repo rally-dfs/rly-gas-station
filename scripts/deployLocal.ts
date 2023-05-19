@@ -65,6 +65,13 @@ async function main() {
     contractsDeployment.forwarderAddress
   );
 
+  permitToken.connect(deployer);
+
+  await permitToken.transfer(
+    permitFaucet.address,
+    ethers.utils.parseEther("1000000")
+  );
+
   const methodIdClaim = polygonFaucet.interface.getSighash("claim");
   const methodIdTransfer = polygonToken.interface.getSighash("transfer");
   const methodIdExecute = polygonToken.interface.getSighash(
