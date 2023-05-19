@@ -18,10 +18,11 @@ async function main() {
   // deploy paymaster
 
   const Paymaster = await hre.ethers.getContractFactory("RLYPaymaster");
-  const methodId = faucet.interface.getSighash("claim");
+  const methodIdClaim = faucet.interface.getSighash("claim");
   const methodIdTransfer = token.interface.getSighash("transfer");
   const methodIdExecute = token.interface.getSighash("executeMetaTransaction");
-  const pm = await Paymaster.deploy(faucet.address, methodId);
+  const pm = await Paymaster.deploy();
+  await pm.setMethodWhitelist(faucet.address, methodIdClaim, true, true);
   await pm.setMethodWhitelist(token.address, methodIdExecute, true, true);
   await pm.setMethodWhitelist(token.address, methodIdTransfer, true, true);
 

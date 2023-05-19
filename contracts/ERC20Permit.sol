@@ -14,6 +14,6 @@ contract ERC20PermitToken is ERC20, ERC20Permit {
         string memory _name,
         string memory _symbol
     ) ERC20(_name, _symbol) ERC20Permit(_name) {
-        _mint(msg.sender, 100000 ether);
+        _mint(msg.sender, 1000000 ether);
     }
 }
