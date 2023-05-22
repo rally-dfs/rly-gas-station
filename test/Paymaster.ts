@@ -6,9 +6,11 @@ import { Contract, ethers, BigNumber, Event } from "ethers";
 const Web3HttpProvider = require("web3-providers-http");
 import * as TokenFaucet from "../artifacts/contracts/TokenFaucet.sol/TokenFaucet.json";
 import * as Paymaster from "../artifacts/contracts/RLYPaymaster.sol/RLYPaymaster.json";
+import * as posRLYTestERC20 from "../artifacts/contracts/posRLYTestERC20.sol/posRLYTestERC20.json";
 
 describe("Paymaster", () => {
   let faucet: Contract;
+  let token: Contract;
   let pm: Contract;
   let from: string;
   let to: string;
@@ -21,6 +23,13 @@ describe("Paymaster", () => {
 
     web3provider = new Web3HttpProvider("http://127.0.0.1:8545/");
     const deploymentProvider = new ethers.providers.Web3Provider(web3provider);
+
+    const erc20Factory = new ethers.ContractFactory(
+      posRLYTestERC20.abi,
+      posRLYTestERC20.bytecode,
+      deploymentProvider.getSigner()
+    );
+
     const faucetFactory = new ethers.ContractFactory(
       TokenFaucet.abi,
       TokenFaucet.bytecode,
@@ -33,17 +42,19 @@ describe("Paymaster", () => {
       deploymentProvider.getSigner()
     );
 
+    token = await erc20Factory.deploy();
+    await token.deployed();
+
     faucet = await faucetFactory.deploy(
-      "Cool Token",
-      "CT",
-      18,
+      token.address,
+      ethers.utils.parseEther("10"),
       forwarderAddress
     );
-
     await faucet.deployed();
 
     const methodId = faucet.interface.getSighash("claim");
-    pm = await paymasterFactory.deploy(faucet.address, methodId);
+    pm = await paymasterFactory.deploy();
+    pm.setMethodWhitelist(faucet.address, methodId, true, true);
 
     await pm.setRelayHub(relayHubAddress!);
     await pm.setTrustedForwarder(forwarderAddress!);
@@ -79,6 +90,17 @@ describe("Paymaster", () => {
     const etherProvider = new ethers.providers.Web3Provider(gsnProvider);
 
     faucet = faucet.connect(etherProvider.getSigner(from));
+    token = token.connect(deploymentProvider.getSigner());
+
+    await token.initialize(
+      "Rally Polygon",
+      "pRLY",
+      18,
+      from,
+      ethers.utils.parseEther("1000000")
+    );
+    await token.transfer(faucet.address, ethers.utils.parseEther("100"));
+    token = token.connect(etherProvider.getSigner(from));
   });
 
   describe("test events", async () => {
@@ -107,13 +129,9 @@ describe("Paymaster", () => {
   });
 
   describe("method whitelisting", async () => {
-    it("method that has been whitelisted should succeed", async () => {
-      await expect(faucet.claim()).to.eventually.have.property("hash");
-    });
-
     it("method that hasn't been whitelisted should fail", async () => {
       await expect(
-        faucet.transfer(to, ethers.utils.parseEther("5"))
+        token.transfer(to, ethers.utils.parseEther("5"))
       ).to.eventually.be.rejectedWith(Error);
     });
   });

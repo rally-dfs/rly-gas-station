@@ -3,6 +3,8 @@ pragma solidity ^0.8.13;
 pragma experimental ABIEncoderV2;
 
 import "@opengsn/contracts/src/BasePaymaster.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
  * a paymaster for a single recipient contract.
@@ -39,20 +41,16 @@ contract RLYPaymaster is BasePaymaster {
         uint256 gasUsed
     );
 
-    constructor(address _target, bytes4 _method) {
-        return setMethodWhitelist(_target, _method, false, true);
-    }
-
     function setMethodWhitelist(
         address target,
         bytes4 method,
-        bool _ignoreTrustedForwarder,
-        bool _isAllowed
+        bool ignoreTrustedForwarder,
+        bool isAllowed
     ) public onlyOwner {
         bytes32 _hash = keccak256((abi.encode(target, method)));
         methodWhiteList[_hash] = MethodOptions({
-            ignoreTrustedForwarder: _ignoreTrustedForwarder,
-            isAllowed: _isAllowed
+            ignoreTrustedForwarder: ignoreTrustedForwarder,
+            isAllowed: isAllowed
         });
     }
 
@@ -78,19 +76,19 @@ contract RLYPaymaster is BasePaymaster {
         returns (bytes memory context, bool revertOnRecipientRevert)
     {
         (relayRequest, signature, approvalData, maxPossibleGas);
-        address _to = relayRequest.request.to;
-        bytes4 _method = GsnUtils.getMethodSig(relayRequest.request.data);
+        address to = relayRequest.request.to;
+        bytes4 method = GsnUtils.getMethodSig(relayRequest.request.data);
 
-        MethodOptions memory _methodOptions = methodWhiteList[
-            keccak256(abi.encode(_to, _method))
+        MethodOptions memory methodOptions = methodWhiteList[
+            keccak256(abi.encode(to, method))
         ];
 
         //verify that this method is whitelisted
 
-        require(_methodOptions.isAllowed, "target not whitelisted");
+        require(methodOptions.isAllowed, "target not whitelisted");
 
         //verify trusted forwarder if required by method
-        if (!_methodOptions.ignoreTrustedForwarder) {
+        if (!methodOptions.ignoreTrustedForwarder) {
             GsnEip712Library.verifyForwarderTrusted(relayRequest);
         }
 
@@ -102,12 +100,12 @@ contract RLYPaymaster is BasePaymaster {
         _emitPreCallEvent(
             relayRequest,
             requestHash,
-            _method,
+            method,
             approvalData,
             maxPossibleGas
         );
 
-        return (requestHash, true);
+        return (abi.encode(requestHash, method), true);
     }
 
     function _postRelayedCall(
@@ -117,11 +115,20 @@ contract RLYPaymaster is BasePaymaster {
         GsnTypes.RelayData calldata relayData
     ) internal virtual override {
         (context, success, gasUseWithoutPost, relayData);
-        emit RLYPaymasterPostCallValues(
+
+        (bytes memory requestHash, bytes4 method) = abi.decode(
             context,
+            (bytes, bytes4)
+        );
+
+        emit RLYPaymasterPostCallValues(
+            requestHash,
             relayData.clientId,
             gasUseWithoutPost
         );
+
+        _checkIfPermitAndTransfer(method, relayData);
+        (method, relayData);
     }
 
     function _emitPreCallEvent(
@@ -144,14 +151,43 @@ contract RLYPaymaster is BasePaymaster {
         );
     }
 
-    function _verifyForwarder(GsnTypes.RelayRequest calldata relayRequest)
-        internal
-        view
-        virtual
-        override
-    {
+    // if the user called permit on the token, check if they included a transferFrom call in the paymaster data and execute
+
+    function _checkIfPermitAndTransfer(
+        bytes4 method,
+        GsnTypes.RelayData calldata relayData
+    ) private {
+        if (method == IERC20Permit.permit.selector) {
+            bytes calldata paymasterData = relayData.paymasterData;
+            require(
+                paymasterData.length >= 24,
+                "must contain address and method"
+            );
+            IERC20 token = IERC20(address(bytes20(paymasterData[:20])));
+
+            require(
+                IERC20.transferFrom.selector ==
+                    GsnUtils.getMethodSig(paymasterData[20:]),
+                "invalid method"
+            );
+
+            (bool successTx, ) = address(token).call(paymasterData[20:]);
+            require(successTx, "transferFrom call reverted");
+        }
+    }
+
+    function _verifyForwarder(
+        GsnTypes.RelayRequest calldata relayRequest
+    ) internal view virtual override {
         // We override GNS default behavior as not every call we do requires the recipient contract to trust the forwarder
         // In the case of the default ERC20 contracts executeNativeMetaTransaction on polygon signature checks are done in the contract not in the forawarder
         // This check is now optionally performed in `_preRelayedCall(..)`
+    }
+
+    function _verifyPaymasterData(
+        GsnTypes.RelayRequest calldata relayRequest
+    ) internal view virtual override {
+        // we overide default behavior of the GSN Basepaymaster since it verifys that paymasterData length = 0
+        /// paymaster data is now used, but only after permit has been called and it is validated at that point.
     }
 }

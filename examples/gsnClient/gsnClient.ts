@@ -9,7 +9,6 @@ import {
   estimateCalldataCostForRequest,
   getSenderNonce,
   signRequest,
-  getRelayRequestID,
 } from "./gsnTxHelpers";
 
 import {
@@ -43,15 +42,9 @@ export class gsnLightClient {
       this.config
     );
 
-    //TODO: what is this used for? tx monitoring?
-    const relayRequestId = getRelayRequestID(
-      httpRequest.relayRequest,
-      httpRequest.metadata.signature
-    );
-
     //this is where we relay the transaction
 
-    const res = await axios.post(`${this.config.relayUrl}/relay`, httpRequest);
+    return await axios.post(`${this.config.relayUrl}/relay`, httpRequest);
   };
 
   _updateConfig = async () => {
@@ -64,8 +57,6 @@ export class gsnLightClient {
   _buildRelayRequest = async (
     transaction: GsnTransactionDetails
   ): Promise<RelayRequest> => {
-    transaction.paymasterData = "0x";
-
     //remove call data cost from gas estimate as tx will be called from contract
     transaction.gas = estimateGasWithoutCallData(
       transaction,
@@ -109,7 +100,7 @@ export class gsnLightClient {
         relayWorker: this.config.relayWorkerAddress,
         paymaster: this.config.paymasterAddress,
         forwarder: this.config.forwarderAddress,
-        paymasterData: transaction.paymasterData,
+        paymasterData: transaction.paymasterData?.toString() || "0x",
         //can't find documentation on what this should be, setting to 1 as this is default in defaultGsnConfig
         clientId: "1",
       },
@@ -150,7 +141,7 @@ export class gsnLightClient {
     const relayMaxNonce = relayLastKnownNonce + config.maxRelayNonceGap;
 
     const metadata = {
-      //domainSeparatorName: config.domainSeparatorName,
+      domainSeparatorName: config.domainSeparatorName,
       maxAcceptanceBudget: config.maxAcceptanceBudget,
       relayHubAddress: config.relayHubAddress,
       signature,

@@ -24,47 +24,94 @@ async function main() {
   );
 
   //deploy test rly token
-  const Token = await hre.ethers.getContractFactory("posRLYTestERC20");
+  const PolygonToken = await hre.ethers.getContractFactory("posRLYTestERC20");
+  const PermitToken = await hre.ethers.getContractFactory("ERC20PermitToken");
 
-  const token = await Token.deploy();
-  await token.deployed();
+  const polygonToken = await PolygonToken.deploy();
+  await polygonToken.deployed();
 
-  await token.initialize(
-    "Rally Polygon",
-    "pRLY",
+  const permitToken = await PermitToken.deploy("TakiTest", "TT");
+
+  await polygonToken.initialize(
+    "USD Coin",
+    "USDC",
     18,
     deployer.address,
     ethers.utils.parseEther("15000000000")
   );
 
   // deploy faucet
-  const Faucet = await hre.ethers.getContractFactory("TokenFaucet");
+  const PolygonFaucet = await hre.ethers.getContractFactory("TokenFaucet");
 
-  const faucet = await Faucet.deploy(
-    token.address,
+  const polygonFaucet = await PolygonFaucet.deploy(
+    polygonToken.address,
     ethers.utils.parseEther("10"),
     contractsDeployment.forwarderAddress
   );
-  await faucet.deployed();
+  await polygonFaucet.deployed();
 
-  token.connect(deployer);
+  polygonToken.connect(deployer);
 
-  await token.transfer(faucet.address, ethers.utils.parseEther("1000000"));
+  await polygonToken.transfer(
+    polygonFaucet.address,
+    ethers.utils.parseEther("1000000")
+  );
 
-  const methodId = faucet.interface.getSighash("claim");
-  const methodIdTransfer = token.interface.getSighash("transfer");
-  const methodIdExecute = token.interface.getSighash("executeMetaTransaction");
-  const paymaster = await Paymaster.deploy(faucet.address, methodId);
+  const PermitFaucet = await hre.ethers.getContractFactory("TokenFaucet");
+
+  const permitFaucet = await PermitFaucet.deploy(
+    permitToken.address,
+    ethers.utils.parseEther("10"),
+    contractsDeployment.forwarderAddress
+  );
+
+  permitToken.connect(deployer);
+
+  await permitToken.transfer(
+    permitFaucet.address,
+    ethers.utils.parseEther("1000000")
+  );
+
+  const methodIdClaim = polygonFaucet.interface.getSighash("claim");
+  const methodIdTransfer = polygonToken.interface.getSighash("transfer");
+  const methodIdExecute = polygonToken.interface.getSighash(
+    "executeMetaTransaction"
+  );
+
+  const methodIdPermit = permitToken.interface.getSighash("permit");
+
+  const paymaster = await Paymaster.deploy();
 
   await paymaster.setMethodWhitelist(
-    token.address,
+    polygonFaucet.address,
+    methodIdClaim,
+    true,
+    true
+  );
+
+  await paymaster.setMethodWhitelist(
+    permitFaucet.address,
+    methodIdClaim,
+    true,
+    true
+  );
+
+  await paymaster.setMethodWhitelist(
+    polygonToken.address,
     methodIdExecute,
     true,
     true
   );
   await paymaster.setMethodWhitelist(
-    token.address,
+    polygonToken.address,
     methodIdTransfer,
+    true,
+    true
+  );
+
+  await paymaster.setMethodWhitelist(
+    permitToken.address,
+    methodIdPermit,
     true,
     true
   );
@@ -80,15 +127,15 @@ async function main() {
 
   console.log("local deployment successful!");
 
-  console.log("single recipient paymaster deployed to", paymaster.address);
-  console.log(
-    "single recipient paymaster balance",
-    paymasterBalance.toString()
-  );
+  console.log("rly paymaster deployed to", paymaster.address);
+  console.log("rly paymaster balance", paymasterBalance.toString());
 
   console.log("paymaster deployed to", contractsDeployment.paymasterAddress);
   console.log("forwarder deployed to", contractsDeployment.forwarderAddress);
-  console.log("token faucet deployed to", faucet.address);
+  console.log("polygon token faucet deployed to", polygonFaucet.address);
+  console.log("polygon token deployed to", polygonToken.address);
+  console.log("permit token faucet deployed to", permitFaucet.address);
+  console.log("permit token deployed to", permitToken.address);
 }
 
 main().catch((error) => {
