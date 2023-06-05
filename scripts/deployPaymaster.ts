@@ -7,7 +7,6 @@ async function main() {
   const forwarderAddress = "0xB2b5841DBeF766d4b521221732F9B618fCf34A87";
   const relayHubAddress = "0xfCEE9036EDc85cD5c12A9De6b267c4672Eb4bA1B";
   const faucetAddress = "0x78a0794Bb3BB06238ed5f8D926419bD8fc9546d8";
-  const pmA = "0x61B9BdF9c10F77bD9eD033559Cec410427aeb8A2";
 
   const Faucet = await hre.ethers.getContractFactory("TokenFaucet");
   const Token = await hre.ethers.getContractFactory("posRLYTestERC20");
@@ -30,7 +29,7 @@ async function main() {
   await pm.setRelayHub(relayHubAddress!);
   await pm.setTrustedForwarder(forwarderAddress!);
 
-  const version = await pm.versionPaymaster();
+  console.log("paymaster deployed to", pm.address);
 }
 
 main().catch((error) => {
