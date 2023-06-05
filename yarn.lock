@@ -315,7 +315,7 @@
   resolved "https://registry.yarnpkg.com/@ethersproject/logger/-/logger-5.7.0.tgz#6ce9ae168e74fecf287be17062b590852c311892"
   integrity sha512-0odtFdXu/XHtjQXJYA3u9G0G8btm0ND5Cu8M7i5vhEcE8/HmF4Lbdqanwyv4uQTr2tx6b7fQRmgLrsnpQlmnig==
 
-"@ethersproject/networks@5.7.1", "@ethersproject/networks@^5.7.0":
+"@ethersproject/networks@5.7.1", "@ethersproject/networks@^5.7.0", "@ethersproject/networks@^5.7.1":
   version "5.7.1"
   resolved "https://registry.yarnpkg.com/@ethersproject/networks/-/networks-5.7.1.tgz#118e1a981d757d45ccea6bb58d9fd3d9db14ead6"
   integrity sha512-n/MufjFYv3yFcUyfhnXotyDlNdFb7onmkSy8aQERi2PjNcnWQ66xXxa3XlS8nCcA8aJKJjIIMNJTC7tu80GwpQ==
@@ -337,7 +337,7 @@
   dependencies:
     "@ethersproject/logger" "^5.7.0"
 
-"@ethersproject/providers@5.7.2", "@ethersproject/providers@^5.6.5":
+"@ethersproject/providers@5.7.2", "@ethersproject/providers@^5.6.5", "@ethersproject/providers@^5.7.2":
   version "5.7.2"
   resolved "https://registry.yarnpkg.com/@ethersproject/providers/-/providers-5.7.2.tgz#f8b1a4f275d7ce58cf0a2eec222269a08beb18cb"
   integrity sha512-g34EWZ1WWAVgr4aptGlVBF8mhl3VWjv+8hoAnzStu8Ah22VHBsuGzP17eb6xDVRzw895G4W7vvx60lFFur/1Rg==
@@ -794,16 +794,18 @@
     table "^6.8.0"
     undici "^5.4.0"
 
-"@opengsn/cli@^3.0.0-beta.2":
-  version "3.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/@opengsn/cli/-/cli-3.0.0-beta.2.tgz#2fa4dc4bd67872379eacc53215cbb8cbedd4eb42"
-  integrity sha512-GpDgKWoAAvalay0Atmi/hvu1arvRyrxwz3TzLmmFcPrjsj7ooDzzOPKxO+dzqm09pZvjNO7fCeQ9XW+ySRLxKA==
+"@opengsn/cli@^3.0.0-beta.6":
+  version "3.0.0-beta.6"
+  resolved "https://registry.yarnpkg.com/@opengsn/cli/-/cli-3.0.0-beta.6.tgz#931ac1dd1affa01f62a3bcb4fb01efb4d2cceacb"
+  integrity sha512-7g1UlDpi7p5xvu36TwMB7XXDxhjAszqeUc+e8VZS5twAO8SdIp8iyt1IEXeadbHPrY65R69qk2kaEEkhZyBsVA==
   dependencies:
     "@ethereumjs/tx" "^3.2.0"
-    "@opengsn/common" "^3.0.0-beta.2"
-    "@opengsn/logger" "^3.0.0-beta.2"
-    "@opengsn/provider" "^3.0.0-beta.2"
-    "@opengsn/relay" "^3.0.0-beta.2"
+    "@ethersproject/providers" "^5.7.2"
+    "@opengsn/common" "^3.0.0-beta.6"
+    "@opengsn/contracts" "^3.0.0-beta.6"
+    "@opengsn/logger" "^3.0.0-beta.6"
+    "@opengsn/provider" "^3.0.0-beta.6"
+    "@opengsn/relay" "^3.0.0-beta.6"
     "@truffle/hdwallet-provider" "^2.0.10"
     "@types/asciichart" "^1.5.4"
     "@types/clear" "^0.1.1"
@@ -827,6 +829,7 @@
     ow "^0.28.1"
     terminal-link "^2.1.1"
     web3 "^1.7.3"
+    web3-core "^1.7.4"
     web3-provider-engine "^16.0.4"
 
 "@opengsn/cli@https://github.com/DonGambas/gsn-cli.git":
@@ -890,7 +893,41 @@
     web3-eth-contract "^1.7.3"
     web3-utils "^1.7.3"
 
-"@opengsn/contracts@3.0.0-beta.2", "@opengsn/contracts@^3.0.0-beta.2":
+"@opengsn/common@^3.0.0-beta.6":
+  version "3.0.0-beta.6"
+  resolved "https://registry.yarnpkg.com/@opengsn/common/-/common-3.0.0-beta.6.tgz#65e4adf1196fc354e7df7e4e6fca0c354c35276e"
+  integrity sha512-7sOTh49Uv6YuB6OnSdFtugTPGEMyWPUFBGejRNWekE85GeuK7pOA1A6DvLp/qwEhgDpDnyOEF01/ZCSrjslXwA==
+  dependencies:
+    "@ethereumjs/common" "^2.6.5"
+    "@ethereumjs/tx" "^3.2.0"
+    "@ethersproject/abi" "^5.7.0"
+    "@ethersproject/bignumber" "^5.7.0"
+    "@ethersproject/networks" "^5.7.1"
+    "@ethersproject/providers" "^5.7.2"
+    "@metamask/eth-sig-util" "^4.0.1"
+    "@opengsn/contracts" "^3.0.0-beta.6"
+    "@types/bn.js" "^5.1.0"
+    "@types/semver" "^7.3.4"
+    axios "^0.21.1"
+    bn.js "^5.2.0"
+    chalk "^4.1.2"
+    ethereumjs-util "^7.1.0"
+    ethers "^5.7.2"
+    ethjs-unit "^0.1.6"
+    number-to-bn "^1.7.0"
+    ow "^0.28.1"
+    rlp "^2.2.6"
+    semver "^7.3.2"
+
+"@opengsn/contracts@3.0.0-beta.3":
+  version "3.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@opengsn/contracts/-/contracts-3.0.0-beta.3.tgz#89494ee48cbd7928bd3963b4e57e2a0d9aaf3cfd"
+  integrity sha512-FithJ9/HALdTiQ1dE9l0o5AbJ1j0tzcHeifGBvNDz1fvmvQS8v84o4aUKpJ6Bz4GRlkRob9vJUnyPj3Oh6qgLg==
+  dependencies:
+    "@openzeppelin/contracts" "^4.2.0"
+    web3-eth-contract "^1.7.4"
+
+"@opengsn/contracts@^3.0.0-beta.2":
   version "3.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/@opengsn/contracts/-/contracts-3.0.0-beta.2.tgz#349a72cde26ca1779e0bea3ea0d0837f2f5831dc"
   integrity sha512-NREhDW8ah6NM0I49/gythYVLKRkJ7Z9PIxHByBbiDQRWihmC5wpQS803kTUVnxIRbbtVlUrYXyegP/u9OYTL5A==
@@ -898,17 +935,24 @@
     "@openzeppelin/contracts" "^4.2.0"
     web3-eth-contract "^1.7.4"
 
-"@opengsn/dev@^3.0.0-beta.2":
-  version "3.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/@opengsn/dev/-/dev-3.0.0-beta.2.tgz#dc48eeb297b5664ed60fb488abbb29ba46d93183"
-  integrity sha512-H3uU0aW1XxFKOf8LJ6Yak1vaT1/X6GzpAFWdmyqzhk4hvdPJ36gydN5qLu2QfeuxNmg0eKPVVk6+ZS6X2VJVqA==
+"@opengsn/contracts@^3.0.0-beta.6":
+  version "3.0.0-beta.6"
+  resolved "https://registry.yarnpkg.com/@opengsn/contracts/-/contracts-3.0.0-beta.6.tgz#3455b7c249922a087422721689239a7d539d1138"
+  integrity sha512-zqd7BG339Uq5bfx40CwKXr2waaJqLN9qBVllcWhKBGnkZPKR59wVIPh2zTNzvLorndMRWB3TnOQxAr6tZKjwGQ==
   dependencies:
-    "@opengsn/cli" "^3.0.0-beta.2"
-    "@opengsn/common" "^3.0.0-beta.2"
-    "@opengsn/contracts" "^3.0.0-beta.2"
-    "@opengsn/logger" "^3.0.0-beta.2"
-    "@opengsn/provider" "^3.0.0-beta.2"
-    "@opengsn/relay" "^3.0.0-beta.2"
+    "@openzeppelin/contracts" "^4.2.0"
+
+"@opengsn/dev@^3.0.0-beta.6":
+  version "3.0.0-beta.6"
+  resolved "https://registry.yarnpkg.com/@opengsn/dev/-/dev-3.0.0-beta.6.tgz#c1814a60b09ac3f11563ec7fd20274b54bc70593"
+  integrity sha512-4oJ6RQ5/2PM4U9D1NlgxxXSntce8XIkoBWqHnWBX8XI1a2tepdIk9K9SHmD2wZmX7V/sq9go8xyDUa7tkLuHXA==
+  dependencies:
+    "@opengsn/cli" "^3.0.0-beta.6"
+    "@opengsn/common" "^3.0.0-beta.6"
+    "@opengsn/contracts" "^3.0.0-beta.6"
+    "@opengsn/logger" "^3.0.0-beta.6"
+    "@opengsn/provider" "^3.0.0-beta.6"
+    "@opengsn/relay" "^3.0.0-beta.6"
 
 "@opengsn/logger@^3.0.0-beta.2":
   version "3.0.0-beta.2"
@@ -919,16 +963,25 @@
     loglevel "^1.8.0"
     winston "^3.3.3"
 
-"@opengsn/paymasters@^3.0.0-beta.2":
-  version "3.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/@opengsn/paymasters/-/paymasters-3.0.0-beta.2.tgz#5de306c4596a43dc013446aa8dd07fb527309191"
-  integrity sha512-qttn4ZLCnaM7YqqsTnW6k9kF+9fFV5aQm2+z7mekqXh6XGL9KsxmCCCXWF0mX8UqVeGNbR7i4Lz03tLyU7Tnlg==
+"@opengsn/logger@^3.0.0-beta.6":
+  version "3.0.0-beta.6"
+  resolved "https://registry.yarnpkg.com/@opengsn/logger/-/logger-3.0.0-beta.6.tgz#f343fe706225b23cf045a378476ec5a4991fa884"
+  integrity sha512-0hQ6hUedvSbkiSVUWorbydYpms48HEi3942lp+6N3STr2OpJ5r5oWD/HhkFGwnorJbfHckR7ySCq6auS0NM/ig==
+  dependencies:
+    "@opengsn/common" "^3.0.0-beta.6"
+    loglevel "^1.8.0"
+    winston "^3.3.3"
+
+"@opengsn/paymasters@^3.0.0-beta.3":
+  version "3.0.0-beta.6"
+  resolved "https://registry.yarnpkg.com/@opengsn/paymasters/-/paymasters-3.0.0-beta.6.tgz#d9f97142b0fceb76952d0e8b867a4a7b30227e22"
+  integrity sha512-kjd+2nJnBzUqgGj0K2rqS2oz0VMF35hsGlSKu4xMi1s4urEOgNkzW1Cg3eqWYySy9jAZYxaVuRLKAju/Z2TDZQ==
   dependencies:
     "@metamask/eth-sig-util" "^4.0.1"
-    "@opengsn/common" "^3.0.0-beta.2"
-    "@opengsn/contracts" "^3.0.0-beta.2"
-    "@opengsn/dev" "^3.0.0-beta.2"
-    "@opengsn/provider" "^3.0.0-beta.2"
+    "@opengsn/common" "^3.0.0-beta.6"
+    "@opengsn/contracts" "^3.0.0-beta.6"
+    "@opengsn/dev" "^3.0.0-beta.6"
+    "@opengsn/provider" "^3.0.0-beta.6"
     "@openzeppelin/contracts" "^4.2.0"
     "@uniswap/v3-periphery" "^1.1.1"
     ethereumjs-util "^7.1.0"
@@ -960,6 +1013,23 @@
     web3-eth-contract "^1.7.4"
     web3-utils "^1.7.4"
 
+"@opengsn/provider@^3.0.0-beta.6":
+  version "3.0.0-beta.6"
+  resolved "https://registry.yarnpkg.com/@opengsn/provider/-/provider-3.0.0-beta.6.tgz#92dca690d2981fa48605ed9bd430bfdeb8c27731"
+  integrity sha512-ekUAeaevfOZd+9vD6O1rqLV9uKLuZXVN7WeFiGPkzeNUhybNyOiu42zMPRP3M5buAnFadtCMRWdOGIfMIGgBFw==
+  dependencies:
+    "@ethereumjs/tx" "^3.2.0"
+    "@ethersproject/abi" "^5.7.0"
+    "@ethersproject/abstract-signer" "^5.7.0"
+    "@ethersproject/bignumber" "^5.7.0"
+    "@ethersproject/providers" "^5.7.2"
+    "@metamask/eth-sig-util" "^4.0.1"
+    "@opengsn/common" "^3.0.0-beta.6"
+    abi-decoder "^2.4.0"
+    ethereumjs-util "^7.1.0"
+    ethereumjs-wallet "^1.0.2"
+    ethers "^5.7.2"
+
 "@opengsn/relay@^3.0.0-beta.2":
   version "3.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/@opengsn/relay/-/relay-3.0.0-beta.2.tgz#4b5608056872ce6310080deeb4f7197d4aa01a03"
@@ -990,6 +1060,39 @@
     web3-core "^1.7.4"
     web3-core-helpers "^1.7.4"
     web3-eth "^1.7.4"
+    web3-eth-contract "^1.7.4"
+    web3-utils "^1.7.4"
+
+"@opengsn/relay@^3.0.0-beta.6":
+  version "3.0.0-beta.6"
+  resolved "https://registry.yarnpkg.com/@opengsn/relay/-/relay-3.0.0-beta.6.tgz#de89d745cfb5c5fdbf1080a3dfa7e401841ade03"
+  integrity sha512-dRRFGFpGCu8xqmD2cFGT/w9ik1nqchNFrhrMuVozLreesBEknd3V3MBFFDmnQdxm1NHn6137rXzyX/XEIVWRPw==
+  dependencies:
+    "@ethereumjs/tx" "^3.2.0"
+    "@ethersproject/providers" "^5.7.2"
+    "@opengsn/common" "^3.0.0-beta.6"
+    "@opengsn/contracts" "^3.0.0-beta.6"
+    "@opengsn/logger" "^3.0.0-beta.6"
+    "@seald-io/nedb" "^3.0.0"
+    "@types/cors" "^2.8.12"
+    "@types/express" "^4.17.13"
+    "@types/minimist" "^1.2.0"
+    "@types/nedb" "^1.8.12"
+    abi-decoder "^2.4.0"
+    async-mutex "^0.3.2"
+    axios "^0.27.2"
+    bn.js "^5.2.1"
+    body-parser "^1.20.0"
+    chalk "^4.1.2"
+    cors "^2.8.5"
+    ethereumjs-util "^7.1.0"
+    ethereumjs-wallet "^1.0.2"
+    ethval "^2.1.1"
+    express "^4.18.1"
+    minimist "^1.2.6"
+    ow "^0.28.1"
+    web3 "^1.7.4"
+    web3-core-helpers "^1.7.4"
     web3-eth-contract "^1.7.4"
     web3-utils "^1.7.4"
 
@@ -3528,7 +3631,7 @@ ethers@^5.6.5, ethers@^5.7.0, ethers@^5.7.2:
     "@ethersproject/web" "5.7.1"
     "@ethersproject/wordlists" "5.7.0"
 
-ethjs-unit@0.1.6:
+ethjs-unit@0.1.6, ethjs-unit@^0.1.6:
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/ethjs-unit/-/ethjs-unit-0.1.6.tgz#c665921e476e87bce2a9d588a6fe0405b2c41699"
   integrity sha512-/Sn9Y0oKl0uqQuvgFk/zQgR7aw1g36qX/jzSQ5lSwlO0GigPymk4eGQfeNTD03w1dPOqfz8V77Cy43jH56pagw==
@@ -5580,7 +5683,7 @@ normalize-url@^6.0.1:
   resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-6.1.0.tgz#40d0885b535deffe3f3147bec877d05fe4c5668a"
   integrity sha512-DlL+XwOy3NxAQ8xuC0okPgK46iuVNAK01YN7RueYBqqFeGsBjV9XmCAzAdgt+667bCl5kPh9EqKKDwnaPG1I7A==
 
-number-to-bn@1.7.0:
+number-to-bn@1.7.0, number-to-bn@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/number-to-bn/-/number-to-bn-1.7.0.tgz#bb3623592f7e5f9e0030b1977bd41a0c53fe1ea0"
   integrity sha512-wsJ9gfSz1/s4ZsJN01lyonwuxA1tml6X1yBDnfpMglypcBRFZZkus26EdPSlqS5GJfYddVZa22p3VNb3z5m5Ig==
