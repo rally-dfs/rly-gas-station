@@ -61,7 +61,7 @@ contract RLYPaymaster is BasePaymaster {
         override
         returns (string memory)
     {
-        return "3.0.0-beta.2";
+        return "3.0.0-beta.3";
     }
 
     function _preRelayedCall(
