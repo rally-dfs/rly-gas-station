@@ -5,7 +5,6 @@ const relayHubAbi = require("@opengsn/common/dist/interfaces/IRelayHub.json");
 
 async function main() {
   const env = await GsnTestEnvironment.startGsn("localhost", 8090);
-  console.log(env.relayUrl);
   const { contractsDeployment } = env;
 
   const accounts = await hre.ethers.getSigners();
