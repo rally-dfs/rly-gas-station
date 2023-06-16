@@ -4,8 +4,8 @@ import { RelayProvider } from "@opengsn/provider";
 import { assert, expect } from "chai";
 import { Contract, ethers } from "ethers";
 const Web3HttpProvider = require("web3-providers-http");
-import * as posRLYTestERC20 from "../artifacts/contracts/posRLYTestERC20.sol/posRLYTestERC20.json";
-import * as Paymaster from "../artifacts/contracts/RLYPaymaster.sol/RLYPaymaster.json";
+import * as posRLYTestERC20 from "../../artifacts/contracts/tokens/posRLYTestERC20.sol/posRLYTestERC20.json";
+import * as Paymaster from "../../artifacts/contracts/paymasters/RLYWhitelistPaymaster.sol/RLYWhitelistPaymaster.json";
 import { getTypedMetaTransactionData } from "./metaTx712";
 
 describe("posRLYTestERC20", () => {

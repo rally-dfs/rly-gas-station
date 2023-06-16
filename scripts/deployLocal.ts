@@ -11,7 +11,9 @@ async function main() {
 
   const deployer = accounts[0];
 
-  const Paymaster = await hre.ethers.getContractFactory("RLYPaymaster");
+  const Paymaster = await hre.ethers.getContractFactory(
+    "RLYWhitelistPaymaster"
+  );
 
   if (!contractsDeployment.relayHubAddress) {
     throw "relay hub not deployed";

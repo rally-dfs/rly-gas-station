@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "@opengsn/contracts/src/ERC2771Recipient.sol";
-import "./IERC20.sol";
+import "./tokens/IERC20.sol";
 
 contract TokenFaucet is ERC2771Recipient {
     IERC20 public immutable token;

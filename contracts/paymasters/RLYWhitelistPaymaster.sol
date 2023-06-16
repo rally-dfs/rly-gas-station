@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
  * - reject requests if destination is not the target contract.
  * - reject any request if the target contract reverts.
  */
-contract RLYPaymaster is BasePaymaster {
+contract RLYWhitelistPaymaster is BasePaymaster {
     //mapping(address => mapping(bytes4 => bool)) public methodWhitelist;
 
     struct MethodOptions {
