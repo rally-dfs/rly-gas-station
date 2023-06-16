@@ -157,9 +157,8 @@ async function main() {
       fromAccount
     );
 
-    const messageHash = ethers.utils.solidityKeccak256(["bytes"], [signature]);
-    const messageHashBinary = ethers.utils.arrayify(messageHash);
-    return await authSigner.signMessage(messageHashBinary);
+    const msgBytes = ethers.utils.arrayify(signature);
+    return await authSigner.signMessage(msgBytes);
   };
   const beforeTokenBalance = await token.balanceOf(from);
   await faucet.claim();

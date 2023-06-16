@@ -159,13 +159,8 @@ describe("Paymaster", () => {
         "1337",
         fromAccount
       );
-
-      const messageHash = ethers.utils.solidityKeccak256(
-        ["bytes"],
-        [signature]
-      );
-      const messageHashBinary = ethers.utils.arrayify(messageHash);
-      return await authSigner.signMessage(messageHashBinary);
+      const msgBytes = ethers.utils.arrayify(signature);
+      return await authSigner.signMessage(msgBytes);
     };
     await faucet.claim();
     const afterTokenBalancealance = await token.balanceOf(from);
