@@ -2,6 +2,8 @@ import hre from "hardhat";
 
 require("dotenv").config();
 
+// script to whitelist methods on token contracts
+
 async function main() {
   const paymaster = "0x61B9BdF9c10F77bD9eD033559Cec410427aeb8A2";
   const tokenAddress = "0x76b8D57e5ac6afAc5D415a054453d1DD2c3C0094";
@@ -9,8 +11,6 @@ async function main() {
   const Token = await hre.ethers.getContractFactory("posRLYTestERC20");
 
   const token = Token.attach(tokenAddress);
-
-  // deploy paymaster
 
   const Paymaster = await hre.ethers.getContractFactory("RLYPaymaster");
   const pm = Paymaster.attach(paymaster);
