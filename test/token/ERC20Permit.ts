@@ -2,12 +2,12 @@ import { GsnTestEnvironment } from "@opengsn/cli";
 import { assert } from "chai";
 import { Contract } from "ethers";
 const Web3HttpProvider = require("web3-providers-http");
-import * as erc20Permit from "../artifacts/contracts/ERC20Permit.sol/ERC20PermitToken.json";
-import * as Paymaster from "../artifacts/contracts/RLYPaymaster.sol/RLYPaymaster.json";
+import * as erc20Permit from "../../artifacts/contracts/tokens/ERC20Permit.sol/ERC20PermitToken.json";
+import * as Paymaster from "../../artifacts/contracts/paymasters/RLYWhitelistPaymaster.sol/RLYWhitelistPaymaster.json";
 import { getTypedPermitData } from "./metaTx712";
 import { ethers } from "hardhat";
-import { gsnLightClient } from "../examples/gsnClient/gsnClient";
-import { GsnTransactionDetails, rlyEnv } from "../examples/gsnClient/utils";
+import { gsnLightClient } from "../../examples/gsnClient/gsnClient";
+import { GsnTransactionDetails, rlyEnv } from "../../examples/gsnClient/utils";
 
 describe("erc20Permit", () => {
   let token: Contract;
